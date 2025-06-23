@@ -88,3 +88,9 @@
   "author": "CryptoBank Team",
   "license": "MIT"
 }
+
+
+"peerDependencies": {
+  "date-fns": "^2.28.0 || ^3.0.0"
+}
+
