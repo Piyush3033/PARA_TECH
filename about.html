@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About CryptoBank - Decentralized Banking Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #581c87 0%, #1e3a8a 50%, #312e81 100%);
+            color: white;
+        }
+
+        .container {
+            max-width: 1536px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-brand svg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-center a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
+
+        .nav-center a:hover {
+            color: #06b6d4;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-center a.active {
+            color: #06b6d4;
+            background: rgba(6, 182, 212, 0.2);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .wallet-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connected {
+            background: #10b981;
+        }
+
+        .status-dot.disconnected {
+            background: #ef4444;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .account-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .account-number {
+            font-size: 0.75rem;
+            color: #d1d5db;
+            font-weight: 500;
+        }
+
+        .connection-status {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .mobile-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #06b6d4;
+        }
+
+        .header-section {
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-section h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .header-section p {
+            font-size: 1.25rem;
+            color: #d1d5db;
+            max-width: 48rem;
+            line-height: 1.6;
+        }
+
+        .mission-card {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(37, 99, 235, 0.2) 50%, rgba(139, 92, 246, 0.2) 100%);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 1rem;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .mission-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 10rem;
+            height: 10rem;
+            background: rgba(6, 182, 212, 0.2);
+            border-radius: 50%;
+            filter: blur(3rem);
+            animation: pulse 4s infinite;
+        }
+
+        .mission-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 8rem;
+            height: 8rem;
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 50%;
+            filter: blur(2rem);
+            animation: pulse 4s infinite 2s;
+        }
+
+        .mission-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .mission-icon {
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.4);
+        }
+
+        .mission-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .mission-divider {
+            width: 6rem;
+            height: 0.25rem;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            margin: 0 auto 2rem;
+            border-radius: 9999px;
+        }
+
+        .mission-description {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: #e5e7eb;
+            margin-bottom: 2rem;
+            max-width: 64rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .mission-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .mission-stat {
+            text-align: center;
+        }
+
+        .mission-stat-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+        }
+
+        .mission-stat-icon.green {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .mission-stat-icon.purple {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+        }
+
+        .mission-stat-icon.orange {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+        }
+
+        .mission-stat-title {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .mission-stat-desc {
+            color: #d1d5db;
+            font-size: 0.875rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .feature-icon {
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-description {
+            color: #d1d5db;
+            line-height: 1.6;
+        }
+
+        .tech-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .tech-section h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .tech-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tech-list li {
+            color: #d1d5db;
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .tech-list li::before {
+            content: '•';
+            color: #06b6d4;
+            position: absolute;
+            left: 0;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .team-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .team-avatar {
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .team-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .team-role {
+            color: #06b6d4;
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .team-description {
+            color: #d1d5db;
+            font-size: 0.875rem;
+        }
+
+        .contact-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(124, 58, 237, 0.3) 50%, rgba(79, 70, 229, 0.3) 100%);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 1rem;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 9rem;
+            height: 9rem;
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 50%;
+            filter: blur(3rem);
+            animation: pulse 4s infinite;
+        }
+
+        .contact-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 7rem;
+            height: 7rem;
+            background: rgba(79, 70, 229, 0.2);
+            border-radius: 50%;
+            filter: blur(2rem);
+            animation: pulse 4s infinite 1s;
+        }
+
+        .contact-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .contact-icon {
+            width: 5rem;
+            height: 5rem;
+            background: linear-gradient(135deg, #a855f7, #4f46e5);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.4);
+        }
+
+        .contact-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .contact-divider {
+            width: 6rem;
+            height: 0.25rem;
+            background: linear-gradient(135deg, #a855f7, #4f46e5);
+            margin: 0 auto 1.5rem;
+            border-radius: 9999px;
+        }
+
+        .contact-description {
+            font-size: 1.125rem;
+            color: #e5e7eb;
+            margin-bottom: 2rem;
+            max-width: 32rem;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-method {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .contact-method-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .contact-method-icon.blue {
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+        }
+
+        .contact-method-icon.green {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .contact-method-icon.purple {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+        }
+
+        .contact-method-title {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-method-desc {
+            color: #d1d5db;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb, #0891b2);
+        }
+
+        .btn-outline {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-purple {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            color: white;
+        }
+
+        .btn-purple:hover {
+            background: linear-gradient(135deg, #9333ea, #6d28d9);
+        }
+
+        .contact-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .contact-info-title {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .contact-info-item {
+            color: #d1d5db;
+        }
+
+        .contact-info-label {
+            color: white;
+            font-weight: 600;
+        }
+
+        .icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+
+        .icon-lg {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-center {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .nav-right {
+                gap: 0.5rem;
+            }
+            
+            .wallet-info {
+                padding: 0.25rem 0.5rem;
+            }
+            
+            .account-info {
+                display: none;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+
+            .header-section h1 {
+                font-size: 2rem;
+            }
+
+            .header-section p {
+                font-size: 1rem;
+            }
+
+            .mission-card {
+                padding: 2rem;
+            }
+
+            .mission-title {
+                font-size: 1.5rem;
+            }
+
+            .mission-description {
+                font-size: 1rem;
+            }
+
+            .mission-stats {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navigation">
+        <a href="index.html" class="nav-brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
+                <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>
+            </svg>
+            CryptoBank
+        </a>
+        
+        <ul class="nav-center">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="send.html">Send Funds</a></li>
+            <li><a href="loan.html">Borrow Loan</a></li>
+            <li><a href="history.html">Transaction History</a></li>
+            <li><a href="activity.html">Live Activity</a></li>
+            <li><a href="about.html" class="active">About</a></li>
+        </ul>
+
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
+
+        <div class="nav-right">
+            <div class="wallet-info">
+                <div id="connection-dot" class="status-dot disconnected"></div>
+                <div class="account-info">
+                    <div class="account-number" id="account-number">Account: Not Connected</div>
+                    <div class="connection-status" id="connection-text">Disconnected</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16,17 21,12 16,7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Logout
+            </button>
+        </div>
+
+        <div class="mobile-menu" id="mobile-menu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="send.html">Send Funds</a>
+            <a href="loan.html">Borrow Loan</a>
+            <a href="history.html">Transaction History</a>
+            <a href="activity.html">Live Activity</a>
+            <a href="about.html">About</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header-section">
+            <a href="index.html" class="back-btn">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12,19 5,12 12,5"/>
+                </svg>
+                Back to Home
+            </a>
+            <h1>About CryptoBank</h1>
+            <p>
+                CryptoBank is a revolutionary decentralized banking platform that brings traditional banking services to the
+                blockchain. Built on Ethereum, we provide secure, transparent, and accessible financial services for the
+                digital age.
+            </p>
+        </div>
+
+        <!-- Mission Section -->
+        <div class="mission-card">
+            <div class="mission-content">
+                <div class="mission-icon">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <h2 class="mission-title">Our Mission</h2>
+                <div class="mission-divider"></div>
+                <p class="mission-description">
+                    To democratize access to financial services by leveraging blockchain technology. We believe everyone
+                    should have access to secure, transparent, and efficient banking services without the limitations of
+                    traditional financial institutions.
+                </p>
+                <div class="mission-stats">
+                    <div class="mission-stat">
+                        <div class="mission-stat-icon green">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M2 12h20"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
+                        <h3 class="mission-stat-title">Global Reach</h3>
+                        <p class="mission-stat-desc">Serving users worldwide</p>
+                    </div>
+                    <div class="mission-stat">
+                        <div class="mission-stat-icon purple">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"/>
+                            </svg>
+                        </div>
+                        <h3 class="mission-stat-title">Lightning Fast</h3>
+                        <p class="mission-stat-desc">Transactions processed in under seconds</p>
+                    </div>
+                    <div class="mission-stat">
+                        <div class="mission-stat-icon orange">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
+                        <h3 class="mission-stat-title">Bank-Grade Security</h3>
+                        <p class="mission-stat-desc">Military-grade encryption and security</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div>
+            <h2 class="section-title">Why Choose CryptoBank?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Secure & Decentralized</h3>
+                    <p class="feature-description">
+                        Built on Ethereum blockchain with smart contract security. Your funds are protected by cryptographic protocols and decentralized infrastructure.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Instant Transactions</h3>
+                    <p class="feature-description">
+                        Send and receive funds instantly with minimal gas fees. Our optimized smart contracts ensure fast and efficient transactions.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M2 12h20"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Global Access</h3>
+                    <p class="feature-description">
+                        Access your funds from anywhere in the world, 24/7. No geographical restrictions or banking hours limitations.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Community Driven</h3>
+                    <p class="feature-description">
+                        Built by the community, for the community. Open-source development with transparent governance and continuous improvements.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Privacy Focused</h3>
+                    <p class="feature-description">
+                        Your personal data stays private. We only store what's necessary on-chain, and everything else remains in your control.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="8" cy="8" r="6"/>
+                            <path d="M18.09 10.37A6 6 0 1 1 10.34 18"/>
+                            <path d="M7 6h1v4"/>
+                            <path d="M16.71 13.88.707.707"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">DeFi Integration</h3>
+                    <p class="feature-description">
+                        Seamlessly integrate with the broader DeFi ecosystem. Earn yield, provide liquidity, and access advanced financial products.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technology Stack -->
+        <div class="tech-card">
+            <h2 class="section-title">Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-section">
+                    <h3>Blockchain & Smart Contracts</h3>
+                    <ul class="tech-list">
+                        <li>Ethereum Blockchain</li>
+                        <li>Solidity Smart Contracts</li>
+                        <li>MetaMask Integration</li>
+                        <li>Web3.js & Ethers.js</li>
+                    </ul>
+                </div>
+                <div class="tech-section">
+                    <h3>Frontend & Security</h3>
+                    <ul class="tech-list">
+                        <li>Next.js & React</li>
+                        <li>HTML & Javascript</li>
+                        <li>Tailwind CSS</li>
+                        <li>End-to-end Encryption</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Section -->
+        <div>
+            <h2 class="section-title">Meet Our Team</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <h3 class="team-name">Piyush</h3>
+                    <div class="team-role">FullStack Developer + Api</div>
+                    <p class="team-description">Team Leader</p>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <h3 class="team-name">Aman Dobhal</h3>
+                    <div class="team-role">Backend Developer</div>
+                    <p class="team-description">Team Member</p>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <h3 class="team-name">Ritika Pal</h3>
+                    <div class="team-role">Frontend Developer</div>
+                    <p class="team-description">Team Member</p>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <h3 class="team-name">Anshika Naithani</h3>
+                    <div class="team-role">Frontend Developer</div>
+                    <p class="team-description">Team Member</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security & Compliance -->
+        <div class="tech-card">
+            <h2 class="section-title">Security & Compliance</h2>
+            <div class="tech-grid">
+                <div class="tech-section">
+                    <h3>Security Measures</h3>
+                    <ul class="tech-list">
+                        <li>Multi-signature wallet support</li>
+                        <li>Smart contract audits</li>
+                        <li>Encrypted data storage</li>
+                        <li>Regular security assessments</li>
+                    </ul>
+                </div>
+                <div class="tech-section">
+                    <h3>Best Practices</h3>
+                    <ul class="tech-list">
+                        <li>Open-source development</li>
+                        <li>Community governance</li>
+                        <li>Transparent operations</li>
+                        <li>Regular updates & patches</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="contact-card">
+            <div class="contact-content">
+                <div class="contact-icon">
+                    <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <h2 class="contact-title">Get in Touch</h2>
+                <div class="contact-divider"></div>
+                <p class="contact-description">
+                    Have questions or need support? Our team is here to help you navigate the future of decentralized banking.
+                    We're available 24/7 to assist you.
+                </p>
+
+                <div class="contact-grid">
+                    <div class="contact-method">
+                        <div class="contact-method-icon blue">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <h3 class="contact-method-title">Community</h3>
+                        <p class="contact-method-desc">Join our Discord community</p>
+                        <button class="btn btn-primary">Join Discord</button>
+                    </div>
+
+                    <div class="contact-method">
+                        <div class="contact-method-icon green">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M2 12h20"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
+                        <h3 class="contact-method-title">Documentation</h3>
+                        <p class="contact-method-desc">Read our comprehensive guides</p>
+                        <button class="btn btn-outline">View Docs</button>
+                    </div>
+
+                    <div class="contact-method">
+                        <div class="contact-method-icon purple">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
+                        <h3 class="contact-method-title">Support</h3>
+                        <p class="contact-method-desc">Get help from our team</p>
+                        <button class="btn btn-purple">Contact Support</button>
+                    </div>
+                </div>
+
+                <div class="contact-info">
+                    <h3 class="contact-info-title">Quick Contact</h3>
+                    <div class="contact-info-grid">
+                        <div class="contact-info-item">
+                            <span class="contact-info-label">Email:</span> support@cryptobank.com
+                        </div>
+                        <div class="contact-info-item">
+                            <span class="contact-info-label">Response Time:</span> Within 24 hours
+                        </div>
+                        <div class="contact-info-item">
+                            <span class="contact-info-label">Phone:</span> +91 9458XXXXXX
+                        </div>
+                        <div class="contact-info-item">
+                            <span class="contact-info-label">Availability:</span> 24/7 Support
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wallet state
+        let walletState = {
+            isConnected: false,
+            account: null,
+            balance: '0',
+            chainId: null
+        };
+
+        // Check if MetaMask is installed
+        function isMetaMaskInstalled() {
+            return typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask;
+        }
+
+        // Format address for display
+        function formatAddress(address) {
+            if (!address) return 'Not Connected';
+            return `${address.slice(0, 6)}...${address.slice(-4)}`;
+        }
+
+        // Convert Wei to ETH
+        function weiToEth(wei) {
+            return (parseInt(wei, 16) / Math.pow(10, 18)).toFixed(4);
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('walletConnected');
+                localStorage.removeItem('walletAccount');
+                localStorage.removeItem('walletChainId');
+                localStorage.removeItem('walletBalance');
+                localStorage.removeItem('userLoggedIn');
+                
+                walletState.isConnected = false;
+                walletState.account = null;
+                walletState.balance = '0';
+                walletState.chainId = null;
+                
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Update navigation display
+        function updateNavigation() {
+            const connectionDot = document.getElementById('connection-dot');
+            const connectionText = document.getElementById('connection-text');
+            const accountNumber = document.getElementById('account-number');
+
+            if (walletState.isConnected && walletState.account) {
+                connectionDot.className = 'status-dot connected';
+                connectionText.textContent = 'Connected';
+                accountNumber.textContent = `Account: ${formatAddress(walletState.account)}`;
+            } else {
+                connectionDot.className = 'status-dot disconnected';
+                connectionText.textContent = 'Disconnected';
+                accountNumber.textContent = 'Account: Not Connected';
+            }
+        }
+
+        // Get wallet balance
+        async function getBalance(account) {
+            try {
+                const balance = await window.ethereum.request({
+                    method: 'eth_getBalance',
+                    params: [account, 'latest']
+                });
+                return weiToEth(balance);
+            } catch (error) {
+                console.error('Error getting balance:', error);
+                return '0.0000';
+            }
+        }
+
+        // Save wallet state to localStorage
+        function saveWalletState() {
+            if (walletState.isConnected && walletState.account) {
+                localStorage.setItem('walletConnected', 'true');
+                localStorage.setItem('walletAccount', walletState.account);
+                localStorage.setItem('walletChainId', walletState.chainId);
+                localStorage.setItem('walletBalance', walletState.balance);
+            }
+        }
+
+        // Restore wallet connection from localStorage
+        async function restoreWalletConnection() {
+            const isWalletConnected = localStorage.getItem('walletConnected') === 'true';
+            const storedAccount = localStorage.getItem('walletAccount');
+            
+            if (!isWalletConnected || !storedAccount || !isMetaMaskInstalled()) {
+                return false;
+            }
+            
+            try {
+                const accounts = await window.ethereum.request({
+                    method: 'eth_accounts'
+                });
+                
+                if (accounts.length > 0) {
+                    const currentAccount = accounts[0];
+                    
+                    walletState.account = currentAccount;
+                    walletState.isConnected = true;
+                    
+                    walletState.chainId = await window.ethereum.request({
+                        method: 'eth_chainId'
+                    });
+                    
+                    walletState.balance = await getBalance(currentAccount);
+                    
+                    saveWalletState();
+                    updateNavigation();
+                    
+                    return true;
+                } else {
+                    localStorage.removeItem('walletConnected');
+                    localStorage.removeItem('walletAccount');
+                    localStorage.removeItem('walletChainId');
+                    localStorage.removeItem('walletBalance');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error restoring wallet connection:', error);
+                return false;
+            }
+        }
+
+        // Handle account changes
+        function handleAccountsChanged(accounts) {
+            if (accounts.length === 0) {
+                walletState.isConnected = false;
+                walletState.account = null;
+                walletState.balance = '0';
+                
+                localStorage.removeItem('walletConnected');
+                localStorage.removeItem('walletAccount');
+                localStorage.removeItem('walletChainId');
+                localStorage.removeItem('walletBalance');
+                
+                updateNavigation();
+            } else if (accounts[0] !== walletState.account) {
+                walletState.account = accounts[0];
+                
+                getBalance(accounts[0]).then(balance => {
+                    walletState.balance = balance;
+                    saveWalletState();
+                });
+                
+                updateNavigation();
+            }
+        }
+
+        // Handle chain changes
+        function handleChainChanged(chainId) {
+            walletState.chainId = chainId;
+            
+            if (walletState.account) {
+                getBalance(walletState.account).then(balance => {
+                    walletState.balance = balance;
+                    saveWalletState();
+                });
+            }
+        }
+
+        // Initialize the page
+        async function initAboutPage() {
+            // Try to restore wallet connection if user is logged in
+            const isLoggedIn = localStorage.getItem('userLoggedIn');
+            if (isLoggedIn) {
+                const connectionRestored = await restoreWalletConnection();
+                
+                if (!connectionRestored) {
+                    if (isMetaMaskInstalled()) {
+                        try {
+                            const accounts = await window.ethereum.request({
+                                method: 'eth_accounts'
+                            });
+                            
+                            if (accounts.length > 0) {
+                                walletState.account = accounts[0];
+                                walletState.isConnected = true;
+                                
+                                walletState.chainId = await window.ethereum.request({
+                                    method: 'eth_chainId'
+                                });
+                                
+                                walletState.balance = await getBalance(accounts[0]);
+                                
+                                saveWalletState();
+                                updateNavigation();
+                            }
+                        } catch (error) {
+                            console.error('Error checking MetaMask accounts:', error);
+                        }
+                    }
+                }
+
+                // Set up MetaMask event listeners
+                if (isMetaMaskInstalled()) {
+                    window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+                    window.ethereum.removeListener('chainChanged', handleChainChanged);
+                    
+                    window.ethereum.on('accountsChanged', handleAccountsChanged);
+                    window.ethereum.on('chainChanged', handleChainChanged);
+                }
+            }
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (!mobileMenu.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initAboutPage);
+
+        // Clean up event listeners
+        window.addEventListener('beforeunload', () => {
+            if (isMetaMaskInstalled()) {
+                window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+                window.ethereum.removeListener('chainChanged', handleChainChanged);
+            }
+        });
+    </script>
+</body>
+</html>

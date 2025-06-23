@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoBank Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #581c87 0%, #1e3a8a 50%, #312e81 100%);
+            color: white;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-brand svg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-center a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
+
+        .nav-center a:hover {
+            color: #06b6d4;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-center a.active {
+            color: #06b6d4;
+            background: rgba(6, 182, 212, 0.2);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .wallet-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connected {
+            background: #10b981;
+        }
+
+        .status-dot.disconnected {
+            background: #ef4444;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .account-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .account-number {
+            font-size: 0.75rem;
+            color: #d1d5db;
+            font-weight: 500;
+        }
+
+        .connection-status {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .mobile-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #06b6d4;
+        }
+
+        .welcome-section {
+            margin-bottom: 2rem;
+        }
+
+        .welcome-section h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-section p {
+            color: #d1d5db;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(37, 99, 235, 0.3) 50%, rgba(147, 51, 234, 0.3) 100%);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 8rem;
+            height: 8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(2rem);
+        }
+
+        .balance-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 6rem;
+            height: 6rem;
+            background: rgba(6, 182, 212, 0.2);
+            border-radius: 50%;
+            filter: blur(1rem);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .wallet-icon-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .wallet-icon {
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+        }
+
+        .wallet-details h2 {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .wallet-details .subtitle {
+            font-size: 0.875rem;
+            color: #a5f3fc;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+            position: relative;
+            z-index: 10;
+        }
+
+        .network-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #a5f3fc;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .address {
+            color: #d1d5db;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .stat-label {
+            color: #d1d5db;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+
+        .stat-value.positive {
+            color: #10b981;
+        }
+
+        .stat-value.negative {
+            color: #ef4444;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .action-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .action-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .action-card:hover .action-icon {
+            transform: scale(1.1);
+        }
+
+        .action-icon.send {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .action-icon.loan {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .action-icon.history {
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+        }
+
+        .action-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-description {
+            color: #d1d5db;
+            font-size: 0.875rem;
+        }
+
+        .transactions-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .transaction-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .transaction-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .transaction-icon.send {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .transaction-icon.receive {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .transaction-details .type {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .transaction-details .address-info {
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+
+        .transaction-right {
+            text-align: right;
+        }
+
+        .transaction-amount {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .transaction-amount.send {
+            color: #f87171;
+        }
+
+        .transaction-amount.receive {
+            color: #10b981;
+        }
+
+        .transaction-date {
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0891b2, #2563eb);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .empty-state .message {
+            color: #9ca3af;
+            margin-bottom: 1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            fill: currentColor;
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .nav-center {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .nav-right {
+                gap: 0.5rem;
+            }
+            
+            .wallet-info {
+                padding: 0.25rem 0.5rem;
+            }
+            
+            .account-info {
+                display: none;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navigation">
+        <a href="dashboard.html" class="nav-brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
+                <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>
+            </svg>
+            CryptoBank
+        </a>
+        
+        <ul class="nav-center">
+            <li><a href="dashboard.html" class="active">Dashboard</a></li>
+            <li><a href="send.html">Send Funds</a></li>
+            <li><a href="loan.html">Borrow Loan</a></li>
+            <li><a href="history.html">Transaction History</a></li>
+            <li><a href="activity.html">Live Activity</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
+
+        <div class="nav-right">
+            <div class="wallet-info">
+                <div id="connection-dot" class="status-dot disconnected"></div>
+                <div class="account-info">
+                    <div class="account-number" id="account-number">Account: Not Connected</div>
+                    <div class="connection-status" id="connection-text">Disconnected</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16,17 21,12 16,7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Logout
+            </button>
+        </div>
+
+        <div class="mobile-menu" id="mobile-menu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="send.html">Send Funds</a>
+            <a href="loan.html">Borrow Loan</a>
+            <a href="history.html">Transaction History</a>
+            <a href="activity.html">Live Activity</a>
+            <a href="about.html">About</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-section">
+            <h1>Welcome back!</h1>
+            <p>Manage your crypto assets and transactions</p>
+        </div>
+
+        <div id="error-container"></div>
+
+        <div class="card balance-card">
+            <div class="card-header">
+                <div class="wallet-icon-container">
+                    <div class="wallet-icon">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
+                            <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>
+                        </svg>
+                    </div>
+                    <div class="wallet-details">
+                        <h2>Wallet Balance</h2>
+                        <div class="subtitle">Main Account</div>
+                    </div>
+                </div>
+                <button class="toggle-btn" onclick="toggleBalance()">
+                    <svg id="eye-icon" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <svg id="eye-off-icon" class="icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                        <line x1="1" y1="1" x2="23" y2="23"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="balance-amount" id="balance-display">0.0000 ETH</div>
+            
+            <div class="network-status">
+                <div id="network-dot" class="status-dot disconnected"></div>
+                <span id="network-status">Not Connected</span>
+            </div>
+            
+            <div class="address" id="wallet-address">Address: Not Connected</div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Network</div>
+                    <div class="stat-value" id="network-name">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">USD Value</div>
+                    <div class="stat-value" id="usd-value">$0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-grid">
+            <a href="send.html" class="action-card">
+                <div class="action-icon send">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+                    </svg>
+                </div>
+                <h3 class="action-title">Send Funds</h3>
+                <p class="action-description">Transfer crypto to any wallet</p>
+            </a>
+
+            <a href="loan.html" class="action-card">
+                <div class="action-icon loan">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect width="20" height="14" x="2" y="5" rx="2"/>
+                        <line x1="2" y1="10" x2="22" y2="10"/>
+                    </svg>
+                </div>
+                <h3 class="action-title">Borrow Loan</h3>
+                <p class="action-description">Get instant crypto loans</p>
+            </a>
+
+            <a href="history.html" class="action-card">
+                <div class="action-icon history">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+                    </svg>
+                </div>
+                <h3 class="action-title">View History</h3>
+                <p class="action-description">Check all transactions</p>
+            </a>
+        </div>
+
+        <div class="transactions-section">
+            <h2 class="section-title">Recent Transactions</h2>
+            <div id="transactions-list">
+                <div class="empty-state">
+                    <div class="message">Loading transactions...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wallet state
+        let walletState = {
+            isConnected: false,
+            account: null,
+            balance: '0',
+            chainId: null,
+            networkName: 'Unknown',
+            showBalance: true
+        };
+
+        // Network configurations
+        const networks = {
+            '0x1': 'Ethereum Mainnet',
+            '0x5': 'Goerli Testnet',
+            '0xaa36a7': 'Sepolia Testnet',
+            '0x89': 'Polygon Mainnet',
+            '0x13881': 'Polygon Mumbai',
+            '0xa86a': 'Avalanche Mainnet',
+            '0xa869': 'Avalanche Fuji'
+        };
+
+        // Check if MetaMask is installed
+        function isMetaMaskInstalled() {
+            return typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask;
+        }
+
+        // Show error message
+        function showError(message) {
+            const container = document.getElementById('error-container');
+            container.innerHTML = `<div class="error-message">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        // Format address for display
+        function formatAddress(address) {
+            if (!address) return 'Not Connected';
+            return `${address.slice(0, 6)}...${address.slice(-4)}`;
+        }
+
+        // Convert Wei to ETH
+        function weiToEth(wei) {
+            return (parseInt(wei, 16) / Math.pow(10, 18)).toFixed(4);
+        }
+
+        // Get ETH price in USD
+        async function getEthPrice() {
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+                const data = await response.json();
+                return data.ethereum.usd;
+            } catch (error) {
+                console.error('Error fetching ETH price:', error);
+                return 2000; // Fallback price
+            }
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Clear all stored data
+                localStorage.removeItem('walletConnected');
+                localStorage.removeItem('walletAccount');
+                localStorage.removeItem('userLoggedIn');
+                
+                // Reset wallet state
+                walletState.isConnected = false;
+                walletState.account = null;
+                walletState.balance = '0';
+                walletState.chainId = null;
+                
+                // Redirect to home page
+                window.location.href = './index.html';
+            }
+        }
+
+        // Update navigation display
+        function updateNavigation() {
+            const connectionDot = document.getElementById('connection-dot');
+            const connectionText = document.getElementById('connection-text');
+            const accountNumber = document.getElementById('account-number');
+
+            if (walletState.isConnected && walletState.account) {
+                connectionDot.className = 'status-dot connected';
+                connectionText.textContent = 'Connected';
+                accountNumber.textContent = `Account: ${formatAddress(walletState.account)}`;
+            } else {
+                connectionDot.className = 'status-dot disconnected';
+                connectionText.textContent = 'Disconnected';
+                accountNumber.textContent = 'Account: Not Connected';
+            }
+        }
+
+        // Update wallet display
+        async function updateWalletDisplay() {
+            const balanceDisplay = document.getElementById('balance-display');
+            const addressDisplay = document.getElementById('wallet-address');
+            const networkStatus = document.getElementById('network-status');
+            const networkName = document.getElementById('network-name');
+            const usdValue = document.getElementById('usd-value');
+            const networkDot = document.getElementById('network-dot');
+
+            if (walletState.isConnected) {
+                // Update balance
+                if (walletState.showBalance) {
+                    balanceDisplay.textContent = `${walletState.balance} ETH`;
+                } else {
+                    balanceDisplay.textContent = '••••••••';
+                }
+
+                // Update address
+                addressDisplay.textContent = `Address: ${formatAddress(walletState.account)}`;
+
+                // Update network
+                const networkDisplayName = networks[walletState.chainId] || 'Unknown Network';
+                networkStatus.textContent = `Connected to ${networkDisplayName}`;
+                networkName.textContent = networkDisplayName;
+
+                // Update USD value
+                if (walletState.showBalance) {
+                    const ethPrice = await getEthPrice();
+                    const usdAmount = (parseFloat(walletState.balance) * ethPrice).toFixed(2);
+                    usdValue.textContent = `$${usdAmount}`;
+                } else {
+                    usdValue.textContent = '••••••';
+                }
+
+                // Update network status
+                networkDot.className = 'status-dot connected';
+            } else {
+                balanceDisplay.textContent = '0.0000 ETH';
+                addressDisplay.textContent = 'Address: Not Connected';
+                networkStatus.textContent = 'Not Connected';
+                networkName.textContent = '-';
+                usdValue.textContent = '$0.00';
+                networkDot.className = 'status-dot disconnected';
+            }
+
+            // Update navigation
+            updateNavigation();
+        }
+
+        // Toggle balance visibility
+        function toggleBalance() {
+            walletState.showBalance = !walletState.showBalance;
+            
+            const eyeIcon = document.getElementById('eye-icon');
+            const eyeOffIcon = document.getElementById('eye-off-icon');
+            
+            if (walletState.showBalance) {
+                eyeIcon.classList.remove('hidden');
+                eyeOffIcon.classList.add('hidden');
+            } else {
+                eyeIcon.classList.add('hidden');
+                eyeOffIcon.classList.remove('hidden');
+            }
+            
+            updateWalletDisplay();
+        }
+
+        // Get wallet balance
+        async function getBalance(account) {
+            try {
+                const balance = await window.ethereum.request({
+                    method: 'eth_getBalance',
+                    params: [account, 'latest']
+                });
+                return weiToEth(balance);
+            } catch (error) {
+                console.error('Error getting balance:', error);
+                return '0.0000';
+            }
+        }
+
+        // Get recent transactions from Etherscan API
+        async function getRecentTransactions(address) {
+            try {
+                // Note: In production, you would use a real API key
+                const response = await fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=YourApiKeyToken`);
+                const data = await response.json();
+                
+                if (data.status === '1' && data.result) {
+                    return data.result.slice(0, 3).map(tx => ({
+                        hash: tx.hash,
+                        from: tx.from,
+                        to: tx.to,
+                        value: weiToEth('0x' + parseInt(tx.value).toString(16)),
+                        timestamp: parseInt(tx.timeStamp) * 1000,
+                        type: tx.from.toLowerCase() === address.toLowerCase() ? 'send' : 'receive'
+                    }));
+                }
+                return [];
+            } catch (error) {
+                console.error('Error fetching transactions:', error);
+                return [];
+            }
+        }
+
+        // Display transactions
+        function displayTransactions(transactions) {
+            const transactionsList = document.getElementById('transactions-list');
+            
+            if (transactions.length === 0) {
+                transactionsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="message">No recent transactions found</div>
+                        <a href="send.html" class="btn btn-primary">
+                            Make Your First Transaction
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            let transactionsHTML = '';
+            transactions.forEach(tx => {
+                const isReceive = tx.type === 'receive';
+                const addressInfo = isReceive ? 
+                    `From: ${formatAddress(tx.from)}` : 
+                    `To: ${formatAddress(tx.to)}`;
+                
+                transactionsHTML += `
+                    <div class="transaction-item">
+                        <div class="transaction-left">
+                            <div class="transaction-icon ${tx.type}">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"/>
+                                    <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+                                </svg>
+                            </div>
+                            <div class="transaction-details">
+                                <div class="type">${isReceive ? 'Received' : 'Sent'}</div>
+                                <div class="address-info">${addressInfo}</div>
+                            </div>
+                        </div>
+                        <div class="transaction-right">
+                            <div class="transaction-amount ${tx.type}">
+                                ${isReceive ? '+' : '-'}${tx.value} ETH
+                            </div>
+                            <div class="transaction-date">
+                                ${new Date(tx.timestamp).toLocaleDateString()}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            transactionsHTML += `
+                <a href="history.html" class="btn btn-outline btn-full">
+                    View All Transactions
+                </a>
+            `;
+            
+            transactionsList.innerHTML = transactionsHTML;
+        }
+
+        // Connect to MetaMask
+        async function connectWallet() {
+            if (!isMetaMaskInstalled()) {
+                showError('MetaMask is not installed. Please install MetaMask to continue.');
+                return;
+            }
+
+            try {
+                const accounts = await window.ethereum.request({
+                    method: 'eth_requestAccounts'
+                });
+
+                if (accounts.length > 0) {
+                    walletState.account = accounts[0];
+                    walletState.isConnected = true;
+
+                    // Get chain ID
+                    walletState.chainId = await window.ethereum.request({
+                        method: 'eth_chainId'
+                    });
+
+                    // Get balance
+                    walletState.balance = await getBalance(accounts[0]);
+
+                    // Update display
+                    await updateWalletDisplay();
+
+                    // Load transactions
+                    const transactions = await getRecentTransactions(accounts[0]);
+                    displayTransactions(transactions);
+                }
+            } catch (error) {
+                console.error('Error connecting wallet:', error);
+                showError('Failed to connect wallet. Please try again.');
+            }
+        }
+
+        // Handle account changes
+        function handleAccountsChanged(accounts) {
+            if (accounts.length === 0) {
+                walletState.isConnected = false;
+                walletState.account = null;
+                walletState.balance = '0';
+                updateWalletDisplay();
+                displayTransactions([]);
+            } else if (accounts[0] !== walletState.account) {
+                walletState.account = accounts[0];
+                connectWallet();
+            }
+        }
+
+        // Handle chain changes
+        function handleChainChanged(chainId) {
+            walletState.chainId = chainId;
+            updateWalletDisplay();
+        }
+
+        // Initialize the dashboard
+        async function initDashboard() {
+            // Check if user should be here
+            const isLoggedIn = localStorage.getItem('userLoggedIn');
+            if (!isLoggedIn) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Check if already connected
+            if (isMetaMaskInstalled()) {
+                try {
+                    const accounts = await window.ethereum.request({
+                        method: 'eth_accounts'
+                    });
+
+                    if (accounts.length > 0) {
+                        await connectWallet();
+                    } else {
+                        // Not connected, redirect to home
+                        window.location.href = 'index.html';
+                    }
+                } catch (error) {
+                    console.error('Error checking connection:', error);
+                    window.location.href = 'index.html';
+                }
+
+                // Set up event listeners
+                window.ethereum.on('accountsChanged', handleAccountsChanged);
+                window.ethereum.on('chainChanged', handleChainChanged);
+            } else {
+                showError('MetaMask is not installed. Please install MetaMask to use this dashboard.');
+            }
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (!mobileMenu.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initDashboard);
+
+        // Clean up event listeners
+        window.addEventListener('beforeunload', () => {
+            if (isMetaMaskInstalled()) {
+                window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+                window.ethereum.removeListener('chainChanged', handleChainChanged);
+            }
+        });
+    </script>
+</body>
+</html>

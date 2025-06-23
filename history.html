@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History - CryptoBank</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #581c87 0%, #1e3a8a 50%, #312e81 100%);
+            color: white;
+        }
+
+        .container {
+            max-width: 1536px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-brand svg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-center a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
+
+        .nav-center a:hover {
+            color: #06b6d4;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-center a.active {
+            color: #06b6d4;
+            background: rgba(6, 182, 212, 0.2);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .wallet-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connected {
+            background: #10b981;
+        }
+
+        .status-dot.disconnected {
+            background: #ef4444;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .account-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .account-number {
+            font-size: 0.75rem;
+            color: #d1d5db;
+            font-weight: 500;
+        }
+
+        .connection-status {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .mobile-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #06b6d4;
+        }
+
+        .header-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-section h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-section p {
+            color: #d1d5db;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .filters-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1rem;
+            height: 1rem;
+            color: #9ca3af;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-transform: capitalize;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #06b6d4, #2563eb);
+            border-color: transparent;
+        }
+
+        .transactions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .transaction-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .transaction-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .transaction-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transaction-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .transaction-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .transaction-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .transaction-type {
+            color: white;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .transaction-address {
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+
+        .transaction-timestamp {
+            color: #6b7280;
+            font-size: 0.75rem;
+        }
+
+        .transaction-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+
+        .transaction-amount {
+            font-weight: 500;
+        }
+
+        .transaction-amount.send,
+        .transaction-amount.repayment {
+            color: #f87171;
+        }
+
+        .transaction-amount.receive,
+        .transaction-amount.loan {
+            color: #4ade80;
+        }
+
+        .transaction-amount.default {
+            color: #9ca3af;
+        }
+
+        .transaction-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+        }
+
+        .status-badge.confirmed {
+            background: rgba(16, 185, 129, 0.2);
+            color: #4ade80;
+        }
+
+        .status-badge.pending {
+            background: rgba(234, 179, 8, 0.2);
+            color: #fbbf24;
+        }
+
+        .external-link-btn {
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s;
+        }
+
+        .external-link-btn:hover {
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .empty-icon {
+            width: 3rem;
+            height: 3rem;
+            color: #9ca3af;
+            margin: 0 auto 1rem;
+        }
+
+        .empty-message {
+            color: #9ca3af;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-description {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4, #2563eb);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0891b2, #1d4ed8);
+        }
+
+        .icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+
+        .icon-sm {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .icon-xs {
+            width: 0.75rem;
+            height: 0.75rem;
+        }
+
+        .toast {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            border-color: rgba(239, 68, 68, 0.5);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .toast.success {
+            border-color: rgba(16, 185, 129, 0.5);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .toast-title {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .toast-description {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .nav-center {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .nav-right {
+                gap: 0.5rem;
+            }
+            
+            .wallet-info {
+                padding: 0.25rem 0.5rem;
+            }
+            
+            .account-info {
+                display: none;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+
+            .filters-section {
+                flex-direction: column;
+            }
+
+            .filter-buttons {
+                justify-content: center;
+            }
+
+            .transaction-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .transaction-right {
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .transaction-meta {
+                justify-content: space-between;
+                width: 100%;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .filters-section {
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navigation">
+        <a href="dashboard.html" class="nav-brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
+                <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>
+            </svg>
+            CryptoBank
+        </a>
+        
+        <ul class="nav-center">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="send.html">Send Funds</a></li>
+            <li><a href="loan.html">Borrow Loan</a></li>
+            <li><a href="history.html" class="active">Transaction History</a></li>
+            <li><a href="activity.html">Live Activity</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
+
+        <div class="nav-right">
+            <div class="wallet-info">
+                <div id="connection-dot" class="status-dot disconnected"></div>
+                <div class="account-info">
+                    <div class="account-number" id="account-number">Account: Not Connected</div>
+                    <div class="connection-status" id="connection-text">Disconnected</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16,17 21,12 16,7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Logout
+            </button>
+        </div>
+
+        <div class="mobile-menu" id="mobile-menu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="send.html">Send Funds</a>
+            <a href="loan.html">Borrow Loan</a>
+            <a href="history.html">Transaction History</a>
+            <a href="activity.html">Live Activity</a>
+            <a href="about.html">About</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header-section">
+            <a href="dashboard.html" class="back-btn">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12,19 5,12 12,5"/>
+                </svg>
+                Back to Dashboard
+            </a>
+            <h1>Transaction History</h1>
+            <p>View all your blockchain transactions</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="card">
+            <div class="filters-section">
+                <div class="search-container">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input
+                        type="text"
+                        id="search-input"
+                        class="search-input"
+                        placeholder="Search by hash, address..."
+                    />
+                </div>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="send">Send</button>
+                    <button class="filter-btn" data-filter="receive">Receive</button>
+                    <button class="filter-btn" data-filter="loan">Loan</button>
+                    <button class="filter-btn" data-filter="repayment">Repayment</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions List -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3v5h5"/>
+                        <path d="M21 21v-5h-5"/>
+                        <path d="M21 3a16 16 0 0 0-13.8 8"/>
+                        <path d="M3 21a16 16 0 0 0 13.8-8"/>
+                    </svg>
+                    All Transactions
+                    <span id="transaction-count" style="font-size: 0.875rem; font-weight: normal; color: #9ca3af;">(0 transactions)</span>
+                </h2>
+            </div>
+            <div id="transactions-container">
+                <div class="empty-state">
+                    <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3v5h5"/>
+                        <path d="M21 21v-5h-5"/>
+                        <path d="M21 3a16 16 0 0 0-13.8 8"/>
+                        <path d="M3 21a16 16 0 0 0 13.8-8"/>
+                    </svg>
+                    <div class="empty-message">No transactions found</div>
+                    <p class="empty-description">Start by making your first transaction</p>
+                    <a href="send.html" class="btn btn-primary">
+                        Make Your First Transaction
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        // Wallet state
+        let walletState = {
+            isConnected: false,
+            account: null,
+            balance: '0',
+            chainId: null
+        };
+
+        // Transaction state
+        let allTransactions = [];
+        let filteredTransactions = [];
+        let currentFilter = 'all';
+        let searchTerm = '';
+
+        // Check if MetaMask is installed
+        function isMetaMaskInstalled() {
+            return typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask;
+        }
+
+        // Show toast notification
+        function showToast(title, description, type = 'info') {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            toast.innerHTML = `
+                <div class="toast-title">${title}</div>
+                <div class="toast-description">${description}</div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            // Hide and remove toast after 5 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toastContainer.contains(toast)) {
+                        toastContainer.removeChild(toast);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        // Format address for display
+        function formatAddress(address) {
+            if (!address) return 'N/A';
+            return `${address.slice(0, 6)}...${address.slice(-4)}`;
+        }
+
+        // Convert Wei to ETH
+        function weiToEth(wei) {
+            return (parseInt(wei, 16) / Math.pow(10, 18)).toFixed(4);
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('walletConnected');
+                localStorage.removeItem('walletAccount');
+                localStorage.removeItem('walletChainId');
+                localStorage.removeItem('walletBalance');
+                localStorage.removeItem('userLoggedIn');
+                
+                walletState.isConnected = false;
+                walletState.account = null;
+                walletState.balance = '0';
+                walletState.chainId = null;
+                
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Update navigation display
+        function updateNavigation() {
+            const connectionDot = document.getElementById('connection-dot');
+            const connectionText = document.getElementById('connection-text');
+            const accountNumber = document.getElementById('account-number');
+
+            if (walletState.isConnected && walletState.account) {
+                connectionDot.className = 'status-dot connected';
+                connectionText.textContent = 'Connected';
+                accountNumber.textContent = `Account: ${formatAddress(walletState.account)}`;
+            } else {
+                connectionDot.className = 'status-dot disconnected';
+                connectionText.textContent = 'Disconnected';
+                accountNumber.textContent = 'Account: Not Connected';
+            }
+        }
+
+        // Get wallet balance
+        async function getBalance(account) {
+            try {
+                const balance = await window.ethereum.request({
+                    method: 'eth_getBalance',
+                    params: [account, 'latest']
+                });
+                return weiToEth(balance);
+            } catch (error) {
+                console.error('Error getting balance:', error);
+                return '0.0000';
+            }
+        }
+
+        // Save wallet state to localStorage
+        function saveWalletState() {
+            if (walletState.isConnected && walletState.account) {
+                localStorage.setItem('walletConnected', 'true');
+                localStorage.setItem('walletAccount', walletState.account);
+                localStorage.setItem('walletChainId', walletState.chainId);
+                localStorage.setItem('walletBalance', walletState.balance);
+            }
+        }
+
+        // Restore wallet connection from localStorage
+        async function restoreWalletConnection() {
+            const isWalletConnected = localStorage.getItem('walletConnected') === 'true';
+            const storedAccount = localStorage.getItem('walletAccount');
+            
+            if (!isWalletConnected || !storedAccount || !isMetaMaskInstalled()) {
+                return false;
+            }
+            
+            try {
+                const accounts = await window.ethereum.request({
+                    method: 'eth_accounts'
+                });
+                
+                if (accounts.length > 0) {
+                    const currentAccount = accounts[0];
+                    
+                    walletState.account = currentAccount;
+                    walletState.isConnected = true;
+                    
+                    walletState.chainId = await window.ethereum.request({
+                        method: 'eth_chainId'
+                    });
+                    
+                    walletState.balance = await getBalance(currentAccount);
+                    
+                    saveWalletState();
+                    updateNavigation();
+                    
+                    return true;
+                } else {
+                    localStorage.removeItem('walletConnected');
+                    localStorage.removeItem('walletAccount');
+                    localStorage.removeItem('walletChainId');
+                    localStorage.removeItem('walletBalance');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error restoring wallet connection:', error);
+                return false;
+            }
+        }
+
+        // Handle account changes
+        function handleAccountsChanged(accounts) {
+            if (accounts.length === 0) {
+                walletState.isConnected = false;
+                walletState.account = null;
+                walletState.balance = '0';
+                
+                localStorage.removeItem('walletConnected');
+                localStorage.removeItem('walletAccount');
+                localStorage.removeItem('walletChainId');
+                localStorage.removeItem('walletBalance');
+                
+                updateNavigation();
+                showToast('Warning', 'Wallet disconnected', 'error');
+            } else if (accounts[0] !== walletState.account) {
+                walletState.account = accounts[0];
+                
+                getBalance(accounts[0]).then(balance => {
+                    walletState.balance = balance;
+                    saveWalletState();
+                });
+                
+                updateNavigation();
+                showToast('Info', 'Account changed to ' + formatAddress(accounts[0]), 'info');
+            }
+        }
+
+        // Handle chain changes
+        function handleChainChanged(chainId) {
+            walletState.chainId = chainId;
+            
+            if (walletState.account) {
+                getBalance(walletState.account).then(balance => {
+                    walletState.balance = balance;
+                    saveWalletState();
+                });
+            }
+        }
+
+        // Get transaction icon
+        function getTransactionIcon(type) {
+            switch (type) {
+                case 'send':
+                    return `<svg class="icon-sm" style="color: #f87171;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+                    </svg>`;
+                case 'receive':
+                    return `<svg class="icon-sm" style="color: #4ade80; transform: rotate(180deg);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+                    </svg>`;
+                case 'loan':
+                    return `<svg class="icon-sm" style="color: #a855f7;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect width="20" height="14" x="2" y="5" rx="2"/>
+                        <line x1="2" y1="10" x2="22" y2="10"/>
+                    </svg>`;
+                case 'repayment':
+                    return `<svg class="icon-sm" style="color: #3b82f6;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect width="20" height="14" x="2" y="5" rx="2"/>
+                        <line x1="2" y1="10" x2="22" y2="10"/>
+                    </svg>`;
+                default:
+                    return `<svg class="icon-sm" style="color: #9ca3af;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+                    </svg>`;
+            }
+        }
+
+        // Get transaction type display name
+        function getTransactionTypeName(type) {
+            switch (type) {
+                case 'send':
+                    return 'Sent';
+                case 'receive':
+                    return 'Received';
+                case 'loan':
+                    return 'Loan Borrowed';
+                case 'repayment':
+                    return 'Loan Repaid';
+                default:
+                    return type;
+            }
+        }
+
+        // Get transaction address display
+        function getTransactionAddressDisplay(tx) {
+            switch (tx.type) {
+                case 'send':
+                    return `To: ${formatAddress(tx.to)}`;
+                case 'receive':
+                    return `From: ${formatAddress(tx.from)}`;
+                case 'loan':
+                    return 'From: CryptoBank';
+                case 'repayment':
+                    return 'To: CryptoBank';
+                default:
+                    return `${formatAddress(tx.from)} → ${formatAddress(tx.to)}`;
+            }
+        }
+
+        // Get transaction amount sign and color
+        function getTransactionAmountClass(type) {
+            switch (type) {
+                case 'send':
+                case 'repayment':
+                    return 'send';
+                case 'receive':
+                case 'loan':
+                    return 'receive';
+                default:
+                    return 'default';
+            }
+        }
+
+        // Get transaction amount sign
+        function getTransactionSign(type) {
+            switch (type) {
+                case 'send':
+                case 'repayment':
+                    return '-';
+                case 'receive':
+                case 'loan':
+                    return '+';
+                default:
+                    return '';
+            }
+        }
+
+        // Load transactions from localStorage
+        function loadTransactions() {
+            const stored = localStorage.getItem('transactions');
+            if (stored) {
+                allTransactions = JSON.parse(stored).reverse(); // Show newest first
+            }
+            filterTransactions();
+        }
+
+        // Filter transactions
+        function filterTransactions() {
+            let filtered = [...allTransactions];
+
+            // Apply search filter
+            if (searchTerm) {
+                filtered = filtered.filter(tx =>
+                    tx.hash.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    (tx.to && tx.to.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                    (tx.from && tx.from.toLowerCase().includes(searchTerm.toLowerCase()))
+                );
+            }
+
+            // Apply type filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(tx => tx.type === currentFilter);
+            }
+
+            filteredTransactions = filtered;
+            displayTransactions();
+        }
+
+        // Display transactions
+        function displayTransactions() {
+            const container = document.getElementById('transactions-container');
+            const countElement = document.getElementById('transaction-count');
+            
+            countElement.textContent = `(${filteredTransactions.length} transactions)`;
+
+            if (filteredTransactions.length === 0) {
+                const hasSearchOrFilter = searchTerm || currentFilter !== 'all';
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3v5h5"/>
+                            <path d="M21 21v-5h-5"/>
+                            <path d="M21 3a16 16 0 0 0-13.8 8"/>
+                            <path d="M3 21a16 16 0 0 0 13.8-8"/>
+                        </svg>
+                        <div class="empty-message">No transactions found</div>
+                        <p class="empty-description">
+                            ${hasSearchOrFilter 
+                                ? 'Try adjusting your search or filter criteria' 
+                                : 'Start by making your first transaction'}
+                        </p>
+                        ${!hasSearchOrFilter ? '<a href="send.html" class="btn btn-primary">Make Your First Transaction</a>' : ''}
+                    </div>
+                `;
+                return;
+            }
+
+            let transactionsHTML = '<div class="transactions-list">';
+            
+            filteredTransactions.forEach((tx, index) => {
+                const isRealTransaction = tx.hash && !tx.hash.startsWith('loan_') && !tx.hash.startsWith('repay_');
+                
+                transactionsHTML += `
+                    <div class="transaction-item">
+                        <div class="transaction-content">
+                            <div class="transaction-left">
+                                <div class="transaction-icon">
+                                    ${getTransactionIcon(tx.type)}
+                                </div>
+                                <div class="transaction-details">
+                                    <div class="transaction-type">${getTransactionTypeName(tx.type)}</div>
+                                    <div class="transaction-address">${getTransactionAddressDisplay(tx)}</div>
+                                    <div class="transaction-timestamp">${new Date(tx.timestamp).toLocaleString()}</div>
+                                </div>
+                            </div>
+                            <div class="transaction-right">
+                                <div class="transaction-amount ${getTransactionAmountClass(tx.type)}">
+                                    ${getTransactionSign(tx.type)}${tx.amount} ETH
+                                </div>
+                                <div class="transaction-meta">
+                                    <span class="status-badge ${tx.status}">
+                                        ${tx.status}
+                                    </span>
+                                    ${isRealTransaction ? `
+                                        <button class="external-link-btn" onclick="openEtherscan('${tx.hash}')">
+                                            <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                                <polyline points="15,3 21,3 21,9"/>
+                                                <line x1="10" y1="14" x2="21" y2="3"/>
+                                            </svg>
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            transactionsHTML += '</div>';
+            container.innerHTML = transactionsHTML;
+        }
+
+        // Open Etherscan
+        function openEtherscan(hash) {
+            window.open(`https://etherscan.io/tx/${hash}`, '_blank');
+        }
+
+        // Handle search input
+        function handleSearch() {
+            const searchInput = document.getElementById('search-input');
+            searchTerm = searchInput.value.trim();
+            filterTransactions();
+        }
+
+        // Handle filter button click
+        function handleFilterClick(filter) {
+            currentFilter = filter;
+            
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+            
+            filterTransactions();
+        }
+
+        // Initialize the page
+        async function initHistoryPage() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn');
+            if (!isLoggedIn) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Try to restore wallet connection
+            const connectionRestored = await restoreWalletConnection();
+            
+            if (!connectionRestored) {
+                if (isMetaMaskInstalled()) {
+                    try {
+                        const accounts = await window.ethereum.request({
+                            method: 'eth_accounts'
+                        });
+                        
+                        if (accounts.length > 0) {
+                            walletState.account = accounts[0];
+                            walletState.isConnected = true;
+                            
+                            walletState.chainId = await window.ethereum.request({
+                                method: 'eth_chainId'
+                            });
+                            
+                            walletState.balance = await getBalance(accounts[0]);
+                            
+                            saveWalletState();
+                            updateNavigation();
+                        }
+                    } catch (error) {
+                        console.error('Error checking MetaMask accounts:', error);
+                    }
+                }
+            }
+
+            // Load transactions
+            loadTransactions();
+
+            // Set up MetaMask event listeners
+            if (isMetaMaskInstalled()) {
+                window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+                window.ethereum.removeListener('chainChanged', handleChainChanged);
+                
+                window.ethereum.on('accountsChanged', handleAccountsChanged);
+                window.ethereum.on('chainChanged', handleChainChanged);
+            }
+
+            // Set up search input
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', handleSearch);
+
+            // Set up filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    handleFilterClick(btn.dataset.filter);
+                });
+            });
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (!mobileMenu.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initHistoryPage);
+
+        // Clean up event listeners
+        window.addEventListener('beforeunload', () => {
+            if (isMetaMaskInstalled()) {
+                window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+                window.ethereum.removeListener('chainChanged', handleChainChanged);
+            }
+        });
+    </script>
+</body>
+</html>

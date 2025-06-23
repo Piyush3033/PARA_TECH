@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Activity Monitor - CryptoBank</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #581c87 0%, #1e3a8a 50%, #312e81 100%);
+            color: white;
+        }
+
+        .container {
+            max-width: 1792px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-brand svg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-center a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
+
+        .nav-center a:hover {
+            color: #06b6d4;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-center a.active {
+            color: #06b6d4;
+            background: rgba(6, 182, 212, 0.2);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .wallet-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connected {
+            background: #10b981;
+        }
+
+        .status-dot.disconnected {
+            background: #ef4444;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .account-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .account-number {
+            font-size: 0.75rem;
+            color: #d1d5db;
+            font-weight: 500;
+        }
+
+        .connection-status {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .mobile-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #06b6d4;
+        }
+
+        .header-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-icon {
+            width: 2rem;
+            height: 2rem;
+            background: linear-gradient(135deg, #4ade80, #10b981);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-section h1 {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .live-indicator {
+            width: 0.75rem;
+            height: 0.75rem;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .header-section p {
+            color: #d1d5db;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .stat-card.green {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+        }
+
+        .stat-card.blue {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(6, 182, 212, 0.2));
+        }
+
+        .stat-card.purple {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.2));
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(239, 68, 68, 0.2));
+        }
+
+        .stat-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .stat-label.green { color: #86efac; }
+        .stat-label.blue { color: #7dd3fc; }
+        .stat-label.purple { color: #c4b5fd; }
+        .stat-label.orange { color: #fdba74; }
+
+        .stat-icon {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .stat-icon.green { color: #4ade80; }
+        .stat-icon.blue { color: #60a5fa; }
+        .stat-icon.purple { color: #a78bfa; }
+        .stat-icon.orange { color: #fb923c; }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .live-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .live-text {
+            font-size: 0.875rem;
+            color: #4ade80;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-transform: capitalize;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #06b6d4, #2563eb);
+            border-color: transparent;
+        }
+
+        .activity-feed {
+            max-height: 24rem;
+            overflow-y: auto;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .activity-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .activity-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.login { background: rgba(16, 185, 129, 0.2); color: #4ade80; }
+        .activity-icon.logout { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .activity-icon.transaction { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .activity-icon.wallet_connect { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+        .activity-icon.loan_create { background: rgba(234, 179, 8, 0.2); color: #fbbf24; }
+        .activity-icon.loan_repay { background: rgba(6, 182, 212, 0.2); color: #22d3ee; }
+        .activity-icon.page_visit { background: rgba(107, 114, 128, 0.2); color: #9ca3af; }
+        .activity-icon.registration { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-description {
+            color: white;
+            font-weight: 500;
+        }
+
+        .status-icon {
+            width: 0.75rem;
+            height: 0.75rem;
+        }
+
+        .status-icon.success { color: #4ade80; }
+        .status-icon.failed { color: #f87171; }
+        .status-icon.pending { color: #fbbf24; }
+
+        .activity-user {
+            color: #9ca3af;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-metadata {
+            color: #6b7280;
+            font-size: 0.75rem;
+        }
+
+        .activity-time {
+            color: #9ca3af;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .breakdown-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .breakdown-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .breakdown-label {
+            color: white;
+            text-transform: capitalize;
+        }
+
+        .breakdown-count {
+            color: #d1d5db;
+            font-weight: 500;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(37, 99, 235, 0.2));
+            text-align: center;
+        }
+
+        .summary-icon {
+            width: 3rem;
+            height: 3rem;
+            color: #22d3ee;
+            margin: 0 auto 0.75rem;
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .summary-label {
+            color: #67e8f9;
+            font-size: 0.875rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .empty-icon {
+            width: 3rem;
+            height: 3rem;
+            color: #9ca3af;
+            margin: 0 auto 1rem;
+        }
+
+        .empty-message {
+            color: #9ca3af;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-description {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-note {
+            color: #6b7280;
+            font-size: 0.75rem;
+        }
+
+        .icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+
+        .icon-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .toast {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            border-color: rgba(239, 68, 68, 0.5);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .toast.success {
+            border-color: rgba(16, 185, 129, 0.5);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .toast-title {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .toast-description {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-center {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .nav-right {
+                gap: 0.5rem;
+            }
+            
+            .wallet-info {
+                padding: 0.25rem 0.5rem;
+            }
+            
+            .account-info {
+                display: none;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navigation">
+        <a href="dashboard.html" class="nav-brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
+                <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>
+            </svg>
+            CryptoBank
+        </a>
+        
+        <ul class="nav-center">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="send.html">Send Funds</a></li>
+            <li><a href="loan.html">Borrow Loan</a></li>
+            <li><a href="history.html">Transaction History</a></li>
+            <li><a href="activity.html" class="active">Live Activity</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
+
+        <div class="nav-right">
+            <div class="wallet-info">
+                <div id="connection-dot" class="status-dot disconnected"></div>
+                <div class="account-info">
+                    <div class="account-number" id="account-number">Account: Not Connected</div>
+                    <div class="connection-status" id="connection-text">Disconnected</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16,17 21,12 16,7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Logout
+            </button>
+        </div>
+
+        <div class="mobile-menu" id="mobile-menu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="send.html">Send Funds</a>
+            <a href="loan.html">Borrow Loan</a>
+            <a href="history.html">Transaction History</a>
+            <a href="activity.html">Live Activity</a>
+            <a href="about.html">About</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header-section">
+            <a href="dashboard.html" class="back-btn">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12,19 5,12 12,5"/>
+                </svg>
+                Back to Dashboard
+            </a>
+            <div class="header-title">
+                <div class="header-icon">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                </div>
+                <h1>Live Activity Monitor</h1>
+                <div class="live-indicator"></div>
+            </div>
+            <p>Real-time monitoring of all website activities</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card green">
+                <div class="stat-content">
+                    <div>
+                        <div class="stat-value" id="total-activities">0</div>
+                        <div class="stat-label green">Total Activities</div>
+                    </div>
+                    <svg class="stat-icon green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="stat-card blue">
+                <div class="stat-content">
+                    <div>
+                        <div class="stat-value" id="last-hour">0</div>
+                        <div class="stat-label blue">Last Hour</div>
+                    </div>
+                    <svg class="stat-icon blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12,6 12,12 16,14"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="stat-card purple">
+                <div class="stat-content">
+                    <div>
+                        <div class="stat-value" id="last-day">0</div>
+                        <div class="stat-label purple">Last 24 Hours</div>
+                    </div>
+                    <svg class="stat-icon purple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="stat-card orange">
+                <div class="stat-content">
+                    <div>
+                        <div class="stat-value" id="transactions">0</div>
+                        <div class="stat-label orange">Transactions</div>
+                    </div>
+                    <svg class="stat-icon orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Activity Feed -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span>Live Activity Feed</span>
+                        <div class="live-badge">
+                            <div class="live-dot"></div>
+                            <span class="live-text">Live</span>
+                        </div>
+                    </div>
+
+                    <!-- Filter Buttons -->
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="login">Login</button>
+                        <button class="filter-btn" data-filter="transaction">Transaction</button>
+                        <button class="filter-btn" data-filter="wallet_connect">Wallet Connect</button>
+                        <button class="filter-btn" data-filter="loan_create">Loan Create</button>
+                        <button class="filter-btn" data-filter="page_visit">Page Visit</button>
+                    </div>
+                </div>
+                <div class="activity-feed">
+                    <div id="activity-list" class="activity-list">
+                        <div class="empty-state">
+                            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                            </svg>
+                            <div class="empty-message">No activities found</div>
+                            <p class="empty-description">Activities will appear here as users interact with the platform</p>
+                            <div class="empty-note">Real activities include: wallet connections, transactions, loans, and page visits</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Activity Breakdown -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Activity Breakdown</h3>
+                    </div>
+                    <div id="activity-breakdown">
+                        <!-- Breakdown items will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Status Distribution -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Status Distribution</h3>
+                    </div>
+                    <div id="status-breakdown">
+                        <!-- Status items will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Recent Activity Summary -->
+                <div class="card summary-card">
+                    <svg class="summary-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M2 12h20"/>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                    <div class="summary-value" id="recent-activities">0</div>
+                    <div class="summary-label">Activities in last 5 minutes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        // Wallet state
+        let walletState = {
+            isConnected: false,
+            account: null,
+            balance: '0',
+            chainId: null
+        };
+
+        // Activity state
+        let activities = [];
+        let filteredActivities = [];
+        let currentFilter = 'all';
+        let stats = {};
+
+        // Check if MetaMask is installed
+        function isMetaMaskInstalled() {
+            return typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask;
+        }
+
+        // Show toast notification
+        function showToast(title, description, type = 'info') {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            toast.innerHTML = `
+                <div class="toast-title">${title}</div>
+                <div class="toast-description">${description}</div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            // Hide and remove toast after 5 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toastContainer.contains(toast)) {
+                        toastContainer.removeChild(toast);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        // Format address for display
+        function formatAddress(address) {
+            if (!address) return 'Not Connected';
+            return `${address.slice(0, 6)}...${address.slice(-4)}`;
+        }
+
+        // Convert Wei to ETH
+        function weiToEth(wei) {
+            return (parseInt(wei, 16) / Math.pow(10, 18)).toFixed(4);
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('walletConnected');
+                localStorage.removeItem('walletAccount');
+                localStorage.removeItem('walletChainId');
+                localStorage.removeItem('walletBalance');
+                localStorage.removeItem('userLoggedIn');
+                
+                walletState.isConnected = false;
+                walletState.account = null;
+                walletState.balance = '0';
+                walletState.chainId = null;
+                
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Update navigation display
+        function updateNavigation() {
+            const connectionDot = document.getElementById('connection-dot');
+            const connectionText = document.getElementById('connection-text');
+            const accountNumber = document.getElementById('account-number');
+
+            if (walletState.isConnected && walletState.account) {
+                connectionDot.className = 'status-dot connected';
+                connectionText.textContent = 'Connected';
+                accountNumber.textContent = `Account: ${formatAddress(walletState.account)}`;
+            } else {
+                connectionDot.className = 'status-dot disconnected';
+                connectionText.textContent = 'Disconnected';
+                accountNumber.textContent = 'Account: Not Connected';
+            }
+        }
+
+        // Get wallet balance
+        async function getBalance(account) {
+            try {
+                const balance = await window.ethereum.request({
+                    method: 'eth_getBalance',
+                    params: [account, 'latest']
+                });
+                return weiToEth(balance);
+            } catch (error) {
+                console.error('Error getting balance:', error);
+                return '0.0000';
+            }
+        }
+
+        // Save wallet state to localStorage
+        function saveWalletState() {
+            if (walletState.isConnected && walletState.account) {
+                localStorage.setItem('walletConnected', 'true');
+                localStorage.setItem('walletAccount', walletState.account);
+                localStorage.setItem('walletChainId', walletState.chainId);
+                localStorage.setItem('walletBalance', walletState.balance);
+            }
+        }
+
+        // Restore wallet connection from localStorage
+        async function restoreWalletConnection() {
+            const isWalletConnected = localStorage.getItem('walletConnected') === 'true';
+            const storedAccount = localStorage.getItem('walletAccount');
+            
+            if (!isWalletConnected || !storedAccount || !isMetaMaskInstalled()) {
+                return false;
+            }
+            
+            try {
+                const accounts = await window.ethereum.request({
+                    method: 'eth_accounts'
+                });
+                
+                if (accounts.length > 0) {
+                    const currentAccount = accounts[0];
+                    
+                    walletState.account = currentAccount;
+                    walletState.isConnected = true;
+                    
+                    walletState.chainId = await window.ethereum.request({
+                        method: 'eth_chainId'
+                    });
+                    
+                    walletState.balance = await getBalance(currentAccount);
+                    
+                    saveWalletState();
+                    updateNavigation();
+                    
+                    return true;
+                } else {
+                    localStorage.removeItem('walletConnected');
+                    localStorage.removeItem('walletAccount');
+                    localStorage.removeItem('walletChainId');
+                    localStorage.removeItem('walletBalance');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error restoring wallet connection:', error);
+                return false;
+            }
+        }
+
+        // Handle account changes
+        function handleAccountsChanged(accounts) {
+            if (accounts.length === 0) {
+                walletState.isConnected = false;
+                walletState.account = null;
+                walletState.balance = '0';
+                
+                localStorage.removeItem('walletConnected');
+                localStorage.removeItem('walletAccount');
+                localStorage.removeItem('walletChainId');
+                localStorage.removeItem('walletBalance');
+                
+                updateNavigation();
+                showToast('Warning', 'Wallet disconnected', 'error');
+            } else if (accounts[0] !== walletState.account) {
+                walletState.account = accounts[0];
+                
+                getBalance(accounts[0]).then(balance => {
+                    walletState.balance = balance;
+                    saveWalletState();
+                });
+                
+                updateNavigation();
+                showToast('Info', 'Account changed to ' + formatAddress(accounts[0]), 'info');
+            }
+        }
+
+        // Handle chain changes
+        function handleChainChanged(chainId) {
+            walletState.chainId = chainId;
+            
+            if (walletState.account) {
+                getBalance(walletState.account).then(balance => {
+                    walletState.balance = balance;
+                    saveWalletState();
+                });
+            }
+        }
+
+        // Get activity icon HTML
+        function getActivityIcon(type) {
+            const icons = {
+                login: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/>',
+                logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/>',
+                transaction: '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9 22,2"/>',
+                wallet_connect: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27,6.96 12,12.01 20.73,6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
+                loan_create: '<rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>',
+                loan_repay: '<rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>',
+                page_visit: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+                registration: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>'
+            };
+            
+            return `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${icons[type] || icons.page_visit}</svg>`;
+        }
+
+        // Get status icon HTML
+        function getStatusIcon(status) {
+            const icons = {
+                success: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/>',
+                failed: '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>',
+                pending: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'
+            };
+            
+            return `<svg class="status-icon ${status}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${icons[status] || icons.pending}</svg>`;
+        }
+
+        // Format time ago
+        function formatTime(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+
+            if (diff < 60000) return "Just now";
+            if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+            if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+            return new Date(timestamp).toLocaleDateString();
+        }
+
+        // Load activities from localStorage
+        function loadActivities() {
+            const storedActivities = localStorage.getItem('activities');
+            if (storedActivities) {
+                activities = JSON.parse(storedActivities).reverse(); // Show newest first
+            }
+            calculateStats();
+            filterActivities();
+        }
+
+        // Calculate activity statistics
+        function calculateStats() {
+            const now = Date.now();
+            const oneHour = 60 * 60 * 1000;
+            const oneDay = 24 * oneHour;
+            const fiveMinutes = 5 * 60 * 1000;
+
+            stats = {
+                total: activities.length,
+                lastHour: activities.filter(a => now - a.timestamp < oneHour).length,
+                lastDay: activities.filter(a => now - a.timestamp < oneDay).length,
+                lastFiveMinutes: activities.filter(a => now - a.timestamp < fiveMinutes).length,
+                byType: {},
+                byStatus: {}
+            };
+
+            // Count by type
+            activities.forEach(activity => {
+                stats.byType[activity.type] = (stats.byType[activity.type] || 0) + 1;
+                stats.byStatus[activity.status] = (stats.byStatus[activity.status] || 0) + 1;
+            });
+
+            updateStatsDisplay();
+        }
+
+        // Update stats display
+        function updateStatsDisplay() {
+            document.getElementById('total-activities').textContent = stats.total || 0;
+            document.getElementById('last-hour').textContent = stats.lastHour || 0;
+            document.getElementById('last-day').textContent = stats.lastDay || 0;
+            document.getElementById('transactions').textContent = stats.byType?.transaction || 0;
+            document.getElementById('recent-activities').textContent = stats.lastFiveMinutes || 0;
+
+            // Update breakdown
+            updateActivityBreakdown();
+            updateStatusBreakdown();
+        }
+
+        // Update activity breakdown
+        function updateActivityBreakdown() {
+            const container = document.getElementById('activity-breakdown');
+            let html = '';
+
+            Object.entries(stats.byType || {}).forEach(([type, count]) => {
+                html += `
+                    <div class="breakdown-item">
+                        <div class="breakdown-left">
+                            <div class="breakdown-icon activity-icon ${type}">
+                                ${getActivityIcon(type)}
+                            </div>
+                            <span class="breakdown-label">${type.replace('_', ' ')}</span>
+                        </div>
+                        <span class="breakdown-count">${count}</span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html || '<div class="empty-message">No activities yet</div>';
+        }
+
+        // Update status breakdown
+        function updateStatusBreakdown() {
+            const container = document.getElementById('status-breakdown');
+            let html = '';
+
+            Object.entries(stats.byStatus || {}).forEach(([status, count]) => {
+                html += `
+                    <div class="breakdown-item">
+                        <div class="breakdown-left">
+                            ${getStatusIcon(status)}
+                            <span class="breakdown-label">${status}</span>
+                        </div>
+                        <span class="breakdown-count">${count}</span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html || '<div class="empty-message">No activities yet</div>';
+        }
+
+        // Filter activities
+        function filterActivities() {
+            if (currentFilter === 'all') {
+                filteredActivities = [...activities];
+            } else {
+                filteredActivities = activities.filter(activity => activity.type === currentFilter);
+            }
+            displayActivities();
+        }
+
+        // Display activities
+        function displayActivities() {
+            const container = document.getElementById('activity-list');
+
+            if (filteredActivities.length === 0) {
+                const hasFilter = currentFilter !== 'all';
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                        <div class="empty-message">No activities found</div>
+                        <p class="empty-description">
+                            ${hasFilter 
+                                ? 'Try adjusting your filter criteria' 
+                                : 'Activities will appear here as users interact with the platform'}
+                        </p>
+                        ${!hasFilter ? '<div class="empty-note">Real activities include: wallet connections, transactions, loans, and page visits</div>' : ''}
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            filteredActivities.slice(0, 50).forEach(activity => {
+                const userDisplay = activity.user.length > 20 
+                    ? `${activity.user.slice(0, 6)}...${activity.user.slice(-4)}`
+                    : activity.user;
+
+                let metadataHtml = '';
+                if (activity.metadata) {
+                    const parts = [];
+                    if (activity.metadata.amount) parts.push(`Amount: ${activity.metadata.amount} ETH`);
+                    if (activity.metadata.to) parts.push(`→ ${activity.metadata.to.slice(0, 6)}...${activity.metadata.to.slice(-4)}`);
+                    if (activity.metadata.page) parts.push(`Page: ${activity.metadata.page}`);
+                    if (parts.length > 0) {
+                        metadataHtml = `<div class="activity-metadata">${parts.join(' ')}</div>`;
+                    }
+                }
+
+                html += `
+                    <div class="activity-item">
+                        <div class="activity-icon ${activity.type}">
+                            ${getActivityIcon(activity.type)}
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-header">
+                                <span class="activity-description">${activity.description}</span>
+                                ${getStatusIcon(activity.status)}
+                            </div>
+                            <div class="activity-user">User: ${userDisplay}</div>
+                            ${metadataHtml}
+                        </div>
+                        <div class="activity-time">${formatTime(activity.timestamp)}</div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Handle filter button click
+        function handleFilterClick(filter) {
+            currentFilter = filter;
+            
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+            
+            filterActivities();
+        }
+
+        // Track activity (for real-time updates)
+        function trackActivity(activity) {
+            const newActivity = {
+                ...activity,
+                timestamp: Date.now(),
+                id: Date.now().toString()
+            };
+            
+            activities.unshift(newActivity); // Add to beginning
+            
+            // Keep only last 1000 activities
+            if (activities.length > 1000) {
+                activities = activities.slice(0, 1000);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('activities', JSON.stringify(activities));
+            
+            // Update display
+            calculateStats();
+            filterActivities();
+        }
+
+        // Initialize the page
+        async function initActivityPage() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn');
+            if (!isLoggedIn) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Try to restore wallet connection
+            const connectionRestored = await restoreWalletConnection();
+            
+            if (!connectionRestored) {
+                if (isMetaMaskInstalled()) {
+                    try {
+                        const accounts = await window.ethereum.request({
+                            method: 'eth_accounts'
+                        });
+                        
+                        if (accounts.length > 0) {
+                            walletState.account = accounts[0];
+                            walletState.isConnected = true;
+                            
+                            walletState.chainId = await window.ethereum.request({
+                                method: 'eth_chainId'
+                            });
+                            
+                            walletState.balance = await getBalance(accounts[0]);
+                            
+                            saveWalletState();
+                            updateNavigation();
+                        }
+                    } catch (error) {
+                        console.error('Error checking MetaMask accounts:', error);
+                    }
+                }
+            }
+
+            // Load activities
+            loadActivities();
+
+            // Set up MetaMask event listeners
+            if (isMetaMaskInstalled()) {
+                window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+                window.ethereum.removeListener('chainChanged', handleChainChanged);
+                
+                window.ethereum.on('accountsChanged', handleAccountsChanged);
+                window.ethereum.on('chainChanged', handleChainChanged);
+            }
+
+            // Set up filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    handleFilterClick(btn.dataset.filter);
+                });
+            });
+
+            // Track page visit
+            if (walletState.account) {
+                trackActivity({
+                    type: 'page_visit',
+                    user: walletState.account,
+                    description: 'Visited Live Activity Monitor',
+                    status: 'success',
+                    metadata: {
+                        page: 'activity.html'
+                    }
+                });
+            }
+
+            // Set up periodic refresh
+            setInterval(() => {
+                calculateStats();
+            }, 30000); // Update stats every 30 seconds
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (!mobileMenu.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initActivityPage);
+
+        // Clean up event listeners
+        window.addEventListener('beforeunload', () => {
+            if (isMetaMaskInstalled()) {
+                window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+                window.ethereum.removeListener('chainChanged', handleChainChanged);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contract Status - CryptoBank</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #581c87 0%, #1e3a8a 50%, #312e81 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .status-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #06b6d4;
+        }
+        .status-item.error {
+            border-left-color: #ef4444;
+        }
+        .status-item.success {
+            border-left-color: #10b981;
+        }
+        .btn {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-weight: 500;
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, #0891b2, #2563eb);
+        }
+        pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 CryptoBank Contract Status</h1>
+        <p>This page helps diagnose smart contract connection issues.</p>
+        
+        <div id="status-container">
+            <div class="status-item">
+                <strong>Checking contract status...</strong>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button class="btn" onclick="checkStatus()">🔄 Refresh Status</button>
+            <button class="btn" onclick="testContract()">🧪 Test Contract</button>
+            <button class="btn" onclick="window.location.href='loan.html'">🏦 Go to Loans</button>
+        </div>
+        
+        <div id="logs" style="margin-top: 20px;">
+            <h3>📋 Diagnostic Logs</h3>
+            <pre id="log-output">Click "Refresh Status" to run diagnostics...</pre>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="js/contract-integration.js"></script>
+    <script>
+        let logs = [];
+        
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            logs.push(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
+            document.getElementById('log-output').textContent = logs.join('\n');
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const container = document.getElementById('status-container');
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
+            container.innerHTML = `<div class="status-item ${className}"><strong>${message}</strong></div>`;
+        }
+        
+        async function checkStatus() {
+            logs = [];
+            addLog('Starting contract status check...');
+            updateStatus('🔄 Checking contract status...');
+            
+            try {
+                // Check if Web3 is available
+                if (typeof window.ethereum === 'undefined') {
+                    throw new Error('MetaMask not found');
+                }
+                addLog('✅ MetaMask detected');
+                
+                // Check if contract class is loaded
+                if (typeof window.CryptoBankContract === 'undefined') {
+                    throw new Error('CryptoBankContract class not loaded');
+                }
+                addLog('✅ CryptoBankContract class loaded');
+                
+                // Check deployment info
+                try {
+                    const response = await fetch('/deployment-info.json');
+                    if (response.ok) {
+                        const info = await response.json();
+                        addLog(`✅ Deployment info found: ${info.contractAddress}`);
+                        addLog(`📊 Contract balance: ${info.contractBalance} ETH`);
+                    } else {
+                        addLog('⚠️  No deployment info found');
+                    }
+                } catch (error) {
+                    addLog('❌ Could not load deployment info: ' + error.message);
+                }
+                
+                // Test Web3 connection
+                const web3 = new Web3(window.ethereum);
+                const networkId = await web3.eth.net.getId();
+                addLog(`🌐 Connected to network: ${networkId}`);
+                
+                // Test contract initialization
+                const contract = new CryptoBankContract();
+                await contract.initialize();
+                addLog('🎉 Contract initialized successfully!');
+                
+                updateStatus('✅ All systems operational!', 'success');
+                
+            } catch (error) {
+                addLog('❌ Error: ' + error.message, 'error');
+                updateStatus('❌ Contract initialization failed: ' + error.message, 'error');
+                
+                // Add troubleshooting suggestions
+                addLog('🔧 Troubleshooting suggestions:', 'info');
+                addLog('1. Make sure Ganache is running on port 8545', 'info');
+                addLog('2. Check if contract is deployed: npm run check-deployment', 'info');
+                addLog('3. Add liquidity if needed: npm run add-liquidity', 'info');
+                addLog('4. Refresh MetaMask and this page', 'info');
+            }
+        }
+        
+        async function testContract() {
+            addLog('🧪 Testing contract functions...');
+            
+            try {
+                const contract = new CryptoBankContract();
+                await contract.initialize();
+                
+                // Test basic contract calls
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length === 0) {
+                    throw new Error('No MetaMask accounts connected');
+                }
+                
+                addLog(`👤 Using account: ${accounts[0]}`);
+                
+                // Test contract methods
+                const loanCount = await contract.contract.methods.loanCount().call();
+                addLog(`📊 Total loans: ${loanCount}`);
+                
+                const owner = await contract.contract.methods.owner().call();
+                addLog(`👑 Contract owner: ${owner}`);
+                
+                addLog('✅ Contract test completed successfully!');
+                updateStatus('✅ Contract test passed!', 'success');
+                
+            } catch (error) {
+                addLog('❌ Contract test failed: ' + error.message, 'error');
+                updateStatus('❌ Contract test failed', 'error');
+            }
+        }
+        
+        // Auto-run status check on page load
+        document.addEventListener('DOMContentLoaded', checkStatus);
+    </script>
+</body>
+</html>

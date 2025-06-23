@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoBank - Sign In</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div class="min-h-screen bg-gradient">
+        <!-- Animated Background Elements -->
+        <div class="background-elements">
+            <div class="bg-element bg-element-1"></div>
+            <div class="bg-element bg-element-2"></div>
+            <div class="bg-element bg-element-3"></div>
+        </div>
+
+        <div class="main-container">
+            <!-- Left Side - Branding -->
+            <div class="left-section">
+                <div class="branding-content">
+                    <div class="logo-section">
+                        <div class="logo-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2"/>
+                                <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h1 class="logo-text">CryptoBank</h1>
+                    </div>
+
+                    <h2 class="main-heading">
+                        The Future of
+                        <span class="gradient-text">Digital Banking</span>
+                    </h2>
+
+                    <p class="description">
+                        Experience seamless, secure, and decentralized banking. Join millions who trust CryptoBank for their digital financial needs.
+                    </p>
+
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div class="feature-content">
+                                <h3>Bank-Grade Security</h3>
+                                <p>Your assets are protected by military-grade encryption</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div class="feature-content">
+                                <h3>Lightning Fast</h3>
+                                <p>Execute transactions in seconds, not minutes</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                                    <line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div class="feature-content">
+                                <h3>Global Access</h3>
+                                <p>Access your funds from anywhere, anytime</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Login Form -->
+            <div class="right-section">
+                <div class="form-container">
+                    <!-- Mobile Logo -->
+                    <div class="mobile-logo">
+                        <div class="mobile-logo-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2"/>
+                                <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h1 class="mobile-logo-text">Welcome to CryptoBank</h1>
+                    </div>
+
+                    <div class="login-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Sign In</h2>
+                            <p class="card-subtitle">Choose your preferred login method</p>
+                        </div>
+
+                        <div class="card-content">
+                            <!-- Login Method Toggle -->
+                            <div class="method-toggle">
+                                <button id="email-tab" class="toggle-btn active">Email Login</button>
+                                <button id="wallet-tab" class="toggle-btn">Wallet Connect</button>
+                            </div>
+
+                            <!-- Email Login Form -->
+                            <div id="email-form" class="login-form active">
+                                <form id="email-login-form">
+                                    <div class="form-group required">
+                                        <label for="email" class="form-label">Email Address</label>
+                                        <input type="email" id="email" class="form-input" placeholder="Enter your email" required minlength="5">
+                                    </div>
+
+                                    <div class="form-group required">
+                                        <label for="password" class="form-label">Password</label>
+                                        <div class="password-input-container">
+                                            <input type="password" id="password" class="form-input" placeholder="Enter your password" required minlength="6">
+                                            <button type="button" id="toggle-password" class="password-toggle">
+                                                <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                                </svg>
+                                                <svg id="eye-off-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" stroke-width="2"/>
+                                                    <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" id="email-submit" class="submit-btn">
+                                        <div class="btn-content">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
+                                                <circle cx="12" cy="16" r="1" fill="currentColor"/>
+                                                <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2"/>
+                                            </svg>
+                                            <span>Sign In</span>
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2"/>
+                                                <polyline points="12,5 19,12 12,19" stroke="currentColor" stroke-width="2"/>
+                                            </svg>
+                                        </div>
+                                        <div class="loading-spinner" style="display: none;">
+                                            <div class="spinner"></div>
+                                            <span>Signing In...</span>
+                                        </div>
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Wallet Connect Form -->
+                            <div id="wallet-form" class="login-form">
+                                <div class="wallet-connect-content">
+                                    <div class="wallet-icon">
+                                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                                            <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2"/>
+                                            <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="wallet-title">Connect Your Wallet</h3>
+                                    <p class="wallet-description">Securely connect your MetaMask wallet to access CryptoBank</p>
+                                </div>
+
+                                <button id="wallet-connect-btn" class="wallet-btn">
+                                    <div class="btn-content">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                                            <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2"/>
+                                            <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2"/>
+                                        </svg>
+                                        <span>Connect MetaMask</span>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2"/>
+                                            <polyline points="12,5 19,12 12,19" stroke="currentColor" stroke-width="2"/>
+                                        </svg>
+                                    </div>
+                                </button>
+                            </div>
+
+                            <div class="signup-link">
+                                <p>Don't have an account? <button id="signup-btn" class="link-btn">Sign up here</button></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Registration Status -->
+                    <div class="registration-status">
+                        <div id="user-count" class="user-count" style="display: none;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                                <line x1="19" y1="8" x2="19" y2="14" stroke="currentColor" stroke-width="2"/>
+                                <line x1="22" y1="11" x2="16" y2="11" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span id="user-count-text">0 users registered</span>
+                        </div>
+                    </div>
+
+                    <div class="terms-text">
+                        <p>By signing in, you agree to our <button class="link-btn">Terms of Service</button> and <button class="link-btn">Privacy Policy</button></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <div class="toast-icon"></div>
+            <div class="toast-text">
+                <div class="toast-title"></div>
+                <div class="toast-description"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign Up Modal -->
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Your Account</h2>
+                <button id="close-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">Join CryptoBank and experience the future of digital banking</p>
+                <form id="signup-form">
+                    <div class="form-group required">
+                        <label for="signup-name" class="form-label">Full Name</label>
+                        <input type="text" id="signup-name" class="form-input" placeholder="Enter your full name" required minlength="2">
+                    </div>
+                    <div class="form-group required">
+                        <label for="signup-email" class="form-label">Email Address</label>
+                        <input type="email" id="signup-email" class="form-input" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group required">
+                        <label for="signup-password" class="form-label">Password</label>
+                        <div class="password-input-container">
+                            <input type="password" id="signup-password" class="form-input" placeholder="Create a password (min 6 characters)" required minlength="6">
+                            <button type="button" id="toggle-signup-password" class="password-toggle">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <label for="signup-confirm-password" class="form-label">Confirm Password</label>
+                        <div class="password-input-container">
+                            <input type="password" id="signup-confirm-password" class="form-input" placeholder="Confirm your password" required minlength="6">
+                            <button type="button" id="toggle-confirm-password" class="password-toggle">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">
+                        <div class="btn-content">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                                <line x1="19" y1="8" x2="19" y2="14" stroke="currentColor" stroke-width="2"/>
+                                <line x1="22" y1="11" x2="16" y2="11" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Create Account</span>
+                        </div>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+const emailTab = document.getElementById('email-tab');
+const walletTab = document.getElementById('wallet-tab');
+const emailForm = document.getElementById('email-form');
+const walletForm = document.getElementById('wallet-form');
+const emailLoginForm = document.getElementById('email-login-form');
+const togglePasswordBtn = document.getElementById('toggle-password');
+const passwordInput = document.getElementById('password');
+const eyeIcon = document.getElementById('eye-icon');
+const eyeOffIcon = document.getElementById('eye-off-icon');
+const emailSubmitBtn = document.getElementById('email-submit');
+const walletConnectBtn = document.getElementById('wallet-connect-btn');
+const signupBtn = document.getElementById('signup-btn');
+const signupModal = document.getElementById('signup-modal');
+const closeModalBtn = document.getElementById('close-modal');
+const signupForm = document.getElementById('signup-form');
+const toast = document.getElementById('toast');
+
+// Activity Tracker
+const activityTracker = {
+    trackActivity: function(activity) {
+        console.log('Activity tracked:', activity);
+        // In a real app, this would send data to analytics service
+        const activities = JSON.parse(localStorage.getItem('activities') || '[]');
+        activities.push({
+            ...activity,
+            timestamp: new Date().toISOString()
+        });
+        localStorage.setItem('activities', JSON.stringify(activities));
+    }
+};
+
+// Toast Notification System
+function showToast(title, description, type = 'success') {
+    const toastTitle = toast.querySelector('.toast-title');
+    const toastDescription = toast.querySelector('.toast-description');
+    
+    toastTitle.textContent = title;
+    toastDescription.textContent = description;
+    
+    toast.className = `toast ${type}`;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 4000);
+}
+
+// Tab Switching
+emailTab.addEventListener('click', () => {
+    emailTab.classList.add('active');
+    walletTab.classList.remove('active');
+    emailForm.classList.add('active');
+    walletForm.classList.remove('active');
+});
+
+walletTab.addEventListener('click', () => {
+    walletTab.classList.add('active');
+    emailTab.classList.remove('active');
+    walletForm.classList.add('active');
+    emailForm.classList.remove('active');
+});
+
+// Password Toggle
+togglePasswordBtn.addEventListener('click', () => {
+    const isPassword = passwordInput.type === 'password';
+    passwordInput.type = isPassword ? 'text' : 'password';
+    
+    if (isPassword) {
+        eyeIcon.style.display = 'none';
+        eyeOffIcon.style.display = 'block';
+    } else {
+        eyeIcon.style.display = 'block';
+        eyeOffIcon.style.display = 'none';
+    }
+});
+
+// Email Login - Enhanced with mandatory sign-up requirement
+emailLoginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    
+    // Basic validation
+    if (!email || !password) {
+        showToast('Login Failed', 'Please fill in all fields', 'error');
+        return;
+    }
+    
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showToast('Login Failed', 'Please enter a valid email address', 'error');
+        return;
+    }
+    
+    // Show loading state
+    const btnContent = emailSubmitBtn.querySelector('.btn-content');
+    const loadingSpinner = emailSubmitBtn.querySelector('.loading-spinner');
+    
+    btnContent.style.display = 'none';
+    loadingSpinner.style.display = 'flex';
+    emailSubmitBtn.disabled = true;
+    
+    // Simulate login process
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Check if user exists in localStorage (MANDATORY SIGN-UP CHECK)
+    const users = JSON.parse(localStorage.getItem('cryptobank_users') || '[]');
+    const user = users.find(u => u.email === email);
+    
+    if (!user) {
+        // User doesn't exist - must sign up first
+        showToast('Account Not Found', 'Please sign up first to create your account', 'error');
+        
+        // Reset button state
+        btnContent.style.display = 'flex';
+        loadingSpinner.style.display = 'none';
+        emailSubmitBtn.disabled = false;
+        
+        // Highlight sign-up option
+        setTimeout(() => {
+            signupBtn.style.animation = 'pulse 2s ease-in-out 3';
+            signupBtn.style.background = 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)';
+            signupBtn.style.padding = '4px 8px';
+            signupBtn.style.borderRadius = '4px';
+            
+            setTimeout(() => {
+                signupBtn.style.animation = '';
+                signupBtn.style.background = '';
+                signupBtn.style.padding = '';
+                signupBtn.style.borderRadius = '';
+            }, 6000);
+        }, 1000);
+        
+        return;
+    }
+    
+    // Check password
+    if (user.password !== password) {
+        showToast('Login Failed', 'Incorrect password. Please try again.', 'error');
+        
+        // Track failed login attempt
+        activityTracker.trackActivity({
+            type: 'login_failed',
+            user: email,
+            description: 'Failed login attempt - incorrect password',
+            status: 'failed',
+            metadata: { method: 'email', reason: 'wrong_password' }
+        });
+        
+        // Reset button state
+        btnContent.style.display = 'flex';
+        loadingSpinner.style.display = 'none';
+        emailSubmitBtn.disabled = false;
+        return;
+    }
+    
+    // Successful login
+    localStorage.setItem('userLoggedIn', 'true');
+    localStorage.setItem('userEmail', email);
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    
+    // Update last login time
+    user.lastLogin = new Date().toISOString();
+    const userIndex = users.findIndex(u => u.email === email);
+    users[userIndex] = user;
+    localStorage.setItem('cryptobank_users', JSON.stringify(users));
+    
+    showToast('Login Successful', `Welcome back, ${user.name}!`, 'success');
+setTimeout(() => {
+    window.location.href = '/page.html';
+}, 1500);
+    
+    activityTracker.trackActivity({
+        type: 'login',
+        user: email,
+        description: `User ${user.name} logged in successfully via email`,
+        status: 'success',
+        metadata: { method: 'email', loginTime: new Date().toISOString() }
+    });
+    
+    // Clear form
+    emailLoginForm.reset();
+    
+    // Simulate redirect to dashboard
+    setTimeout(() => {
+        showToast('Redirecting...', 'Taking you to your dashboard', 'success');
+        // In a real app, you would redirect to dashboard here
+        // window.location.href = '/dashboard';
+    }, 2000);
+    
+    // Reset button state
+    btnContent.style.display = 'flex';
+    loadingSpinner.style.display = 'none';
+    emailSubmitBtn.disabled = false;
+});
+
+// Wallet Connect
+walletConnectBtn.addEventListener('click', async () => {
+    try {
+        // Check if MetaMask is installed
+        if (typeof window.ethereum !== 'undefined') {
+            // Request account access
+            const accounts = await window.ethereum.request({
+                method: 'eth_requestAccounts'
+            });
+            
+            if (accounts.length > 0) {
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('walletAddress', accounts[0]);
+                
+                showToast('Wallet Connected!', 'Welcome to CryptoBank', 'success');
+                
+                activityTracker.trackActivity({
+                    type: 'login',
+                    user: 'Wallet User',
+                    description: 'User logged in via wallet',
+                    status: 'success',
+                    metadata: { method: 'wallet', address: accounts[0] }
+                });
+                
+                // Redirect to dashboard (simulate)
+                setTimeout(() => {
+                    showToast('Redirecting to Dashboard', 'Please Login', 'success');
+                }, 2000);
+            }
+        } else {
+            showToast('MetaMask Not Found', 'Please install MetaMask to continue', 'error');
+        }
+    } catch (error) {
+        console.error('Wallet connection error:', error);
+        showToast('Connection Failed', 'Please try again', 'error');
+    }
+});
+
+// Sign Up Modal
+signupBtn.addEventListener('click', () => {
+    signupModal.style.display = 'block';
+});
+
+closeModalBtn.addEventListener('click', () => {
+    signupModal.style.display = 'none';
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === signupModal) {
+        signupModal.style.display = 'none';
+    }
+});
+
+// Enhanced Sign Up Form with better validation
+signupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const name = document.getElementById('signup-name').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+    const confirmPassword = document.getElementById('signup-confirm-password').value;
+    
+    // Comprehensive validation
+    if (!name) {
+        showToast('Sign Up Failed', 'Please enter your full name', 'error');
+        return;
+    }
+    
+    if (name.length < 2) {
+        showToast('Sign Up Failed', 'Name must be at least 2 characters long', 'error');
+        return;
+    }
+    
+    if (!email) {
+        showToast('Sign Up Failed', 'Please enter your email address', 'error');
+        return;
+    }
+    
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showToast('Sign Up Failed', 'Please enter a valid email address', 'error');
+        return;
+    }
+    
+    if (!password) {
+        showToast('Sign Up Failed', 'Please enter a password', 'error');
+        return;
+    }
+    
+    if (password.length < 6) {
+        showToast('Sign Up Failed', 'Password must be at least 6 characters long', 'error');
+        return;
+    }
+    
+    if (!confirmPassword) {
+        showToast('Sign Up Failed', 'Please confirm your password', 'error');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        showToast('Sign Up Failed', 'Passwords do not match', 'error');
+        return;
+    }
+    
+    // Check if user already exists
+    const users = JSON.parse(localStorage.getItem('cryptobank_users') || '[]');
+    if (users.find(u => u.email === email)) {
+        showToast('Sign Up Failed', 'An account with this email already exists. Please sign in instead.', 'error');
+        return;
+    }
+    
+    // Create new user with additional metadata
+    const newUser = {
+        id: Date.now().toString(), // Simple ID generation
+        name,
+        email,
+        password, // In production, this should be hashed
+        createdAt: new Date().toISOString(),
+        lastLogin: null,
+        isActive: true,
+        signupMethod: 'email'
+    };
+    
+    // Add user to localStorage
+    users.push(newUser);
+    localStorage.setItem('cryptobank_users', JSON.stringify(users));
+    
+    // Show success message
+    showToast('Account Created Successfully!', `Welcome to CryptoBank, ${name}! You can now sign in with your credentials.`, 'success');
+    
+    // Track signup activity
+    activityTracker.trackActivity({
+        type: 'signup',
+        user: email,
+        description: `New user account created for ${name}`,
+        status: 'success',
+        metadata: { 
+            method: 'email',
+            signupTime: new Date().toISOString(),
+            userId: newUser.id
+        }
+    });
+    
+    // Close modal and reset form
+    signupModal.style.display = 'none';
+    signupForm.reset();
+    
+    // Switch to email tab and pre-fill email for convenience
+    emailTab.click();
+    document.getElementById('email').value = email;
+    document.getElementById('password').focus();
+    
+    // Show helpful message
+    setTimeout(() => {
+        showToast('Ready to Sign In', 'Your email has been pre-filled. Just enter your password to sign in.', 'success');
+    }, 2000);
+
+    // After successful signup, update user count
+    updateUserCountDisplay();
+});
+
+// Remove demo users - users must sign up legitimately
+function initializeDemoUsers() {
+    // Only show message about sign-up requirement
+    console.log('🔐 CryptoBank Security Notice:');
+    console.log('Users must sign up first before they can sign in.');
+    console.log('No demo accounts are pre-loaded for security.');
+    
+    // Check if there are any existing users
+    const users = JSON.parse(localStorage.getItem('cryptobank_users') || '[]');
+    if (users.length > 0) {
+        console.log(`📊 Current registered users: ${users.length}`);
+        console.log('Users can sign in with their registered credentials.');
+    } else {
+        console.log('📝 No users registered yet. Please sign up to create your first account.');
+    }
+}
+
+// Add function to update user count display
+function updateUserCountDisplay() {
+    const users = JSON.parse(localStorage.getItem('cryptobank_users') || '[]');
+    const userCountElement = document.getElementById('user-count');
+    const userCountText = document.getElementById('user-count-text');
+    
+    if (users.length > 0) {
+        userCountElement.style.display = 'inline-flex';
+        userCountText.textContent = `${users.length} user${users.length === 1 ? '' : 's'} registered`;
+    } else {
+        userCountElement.style.display = 'none';
+    }
+}
+
+// Enhanced registration status display
+function displayRegistrationStatus() {
+    const users = JSON.parse(localStorage.getItem('cryptobank_users') || '[]');
+    
+    updateUserCountDisplay();
+    
+    if (users.length === 0) {
+        // Show registration prompt for new users
+        setTimeout(() => {
+            showToast('Welcome to CryptoBank', 'Please sign up to create your account and get started!', 'info');
+        }, 1000);
+    } else {
+        console.log(`✅ ${users.length} user(s) registered in the system`);
+        users.forEach((user, index) => {
+            console.log(`${index + 1}. ${user.name} (${user.email}) - Created: ${new Date(user.createdAt).toLocaleDateString()}`);
+        });
+    }
+}
+
+// Function to check login status
+function checkLoginStatus() {
+    const userLoggedIn = localStorage.getItem('userLoggedIn');
+    if (userLoggedIn === 'true') {
+        // Optionally, perform actions for logged-in users, like redirecting to the dashboard
+        console.log('User is logged in.');
+    } else {
+        console.log('User is not logged in.');
+    }
+}
+
+// Add real-time form validation
+function addFormValidation() {
+    const inputs = document.querySelectorAll('.form-input');
+    
+    inputs.forEach(input => {
+        input.addEventListener('blur', () => {
+            validateField(input);
+        });
+        
+        input.addEventListener('input', () => {
+            // Clear error state on input
+            input.classList.remove('error');
+        });
+    });
+}
+
+function validateField(input) {
+    const value = input.value.trim();
+    let isValid = true;
+    
+    if (input.hasAttribute('required') && !value) {
+        isValid = false;
+    }
+    
+    if (input.type === 'email' && value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        isValid = emailRegex.test(value);
+    }
+    
+    if (input.hasAttribute('minlength') && value.length < parseInt(input.getAttribute('minlength'))) {
+        isValid = false;
+    }
+    
+    if (input.id === 'signup-confirm-password') {
+        const password = document.getElementById('signup-password').value;
+        isValid = value === password;
+    }
+    
+    if (isValid && value) {
+        input.classList.add('success');
+        input.classList.remove('error');
+    } else if (!isValid && value) {
+        input.classList.add('error');
+        input.classList.remove('success');
+    } else {
+        input.classList.remove('success', 'error');
+    }
+}
+
+// Enhanced initialization
+document.addEventListener('DOMContentLoaded', () => {
+    initializeDemoUsers(); // Now just shows security notice
+    displayRegistrationStatus(); // Shows current registration status
+    checkLoginStatus();
+    addFormValidation(); // Add form validation
+});
+
+// Add some visual feedback for form interactions
+document.querySelectorAll('.form-input').forEach(input => {
+    input.addEventListener('focus', () => {
+        input.parentElement.style.transform = 'scale(1.02)';
+    });
+    
+    input.addEventListener('blur', () => {
+        input.parentElement.style.transform = 'scale(1)';
+    });
+});
+
+// Add hover effects for buttons
+document.querySelectorAll('button').forEach(button => {
+    button.addEventListener('mouseenter', () => {
+        if (!button.disabled) {
+            button.style.transform = 'translateY(-1px)';
+        }
+    });
+    
+    button.addEventListener('mouseleave', () => {
+        button.style.transform = 'translateY(0)';
+    });
+});
+    </script>
+</body>
+</html>

@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrow Loan - CryptoBank</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="js/contract-integration.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #581c87 0%, #1e3a8a 50%, #312e81 100%);
+            color: white;
+        }
+
+        .container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-brand svg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-center a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
+
+        .nav-center a:hover {
+            color: #06b6d4;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-center a.active {
+            color: #06b6d4;
+            background: rgba(6, 182, 212, 0.2);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .wallet-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connected {
+            background: #10b981;
+        }
+
+        .status-dot.disconnected {
+            background: #ef4444;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .account-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .account-number {
+            font-size: 0.75rem;
+            color: #d1d5db;
+            font-weight: 500;
+        }
+
+        .connection-status {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .mobile-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #06b6d4;
+        }
+
+        .header-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-section h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-section p {
+            color: #d1d5db;
+        }
+
+        .grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .grid-cols-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .label {
+            display: block;
+            color: white;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .input::placeholder {
+            color: #9ca3af;
+        }
+
+        .input:read-only {
+            background: rgba(255, 255, 255, 0.05);
+            cursor: not-allowed;
+        }
+
+        .balance-info {
+            font-size: 0.875rem;
+            color: #9ca3af;
+            margin-top: 0.25rem;
+        }
+
+        .warning-card {
+            background: rgba(234, 179, 8, 0.2);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .warning-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #fbbf24;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .warning-text {
+            color: #fde68a;
+            font-size: 0.875rem;
+        }
+
+        .terms-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .terms-title {
+            color: white;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .terms-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: #d1d5db;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            font-size: 1rem;
+            padding: 1rem;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-success {
+            width: 100%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+        }
+
+        .loan-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .loan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .loan-id {
+            color: white;
+            font-weight: 500;
+        }
+
+        .loan-date {
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+
+        .loan-amount {
+            color: white;
+            font-weight: 500;
+            text-align: right;
+        }
+
+        .loan-label {
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+
+        .loan-details {
+            margin-bottom: 1rem;
+        }
+
+        .loan-detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: #d1d5db;
+        }
+
+        .loan-detail-row.highlight {
+            color: white;
+            font-weight: 500;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .empty-message {
+            color: #9ca3af;
+            margin-bottom: 1rem;
+        }
+
+        .empty-description {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+
+        .toast {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            border-color: rgba(239, 68, 68, 0.5);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .toast.success {
+            border-color: rgba(16, 185, 129, 0.5);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .toast-title {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .toast-description {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .smart-contract-integration {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .smart-contract-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #10b981;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .smart-contract-text {
+            color: #6ee7b7;
+            font-size: 0.875rem;
+        }
+
+        .loan-progress {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .progress-step.active {
+            color: #10b981;
+        }
+
+        .progress-step.completed {
+            color: #10b981;
+        }
+
+        @media (max-width: 1024px) {
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-center {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .nav-right {
+                gap: 0.5rem;
+            }
+            
+            .wallet-info {
+                padding: 0.25rem 0.5rem;
+            }
+            
+            .account-info {
+                display: none;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navigation">
+        <a href="dashboard.html" class="nav-brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
+                <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>
+            </svg>
+            CryptoBank
+        </a>
+        
+        <ul class="nav-center">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="send.html">Send Funds</a></li>
+            <li><a href="loan.html" class="active">Borrow Loan</a></li>
+            <li><a href="history.html">Transaction History</a></li>
+            <li><a href="activity.html">Live Activity</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
+
+        <div class="nav-right">
+            <div class="wallet-info">
+                <div id="connection-dot" class="status-dot disconnected"></div>
+                <div class="account-info">
+                    <div class="account-number" id="account-number">Account: Not Connected</div>
+                    <div class="connection-status" id="connection-text">Disconnected</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16,17 21,12 16,7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Logout
+            </button>
+        </div>
+
+        <div class="mobile-menu" id="mobile-menu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="send.html">Send Funds</a>
+            <a href="loan.html">Borrow Loan</a>
+            <a href="history.html">Transaction History</a>
+            <a href="activity.html">Live Activity</a>
+            <a href="about.html">About</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header-section">
+            <a href="dashboard.html" class="back-btn">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12,19 5,12 12,5"/>
+                </svg>
+                Back to Dashboard
+            </a>
+            <h1>Borrow Loan</h1>
+            <p>Get instant crypto loans with your ETH as collateral - Now with real smart contracts!</p>
+        </div>
+
+        <div class="grid grid-cols-2">
+            <!-- Borrow Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect width="20" height="14" x="2" y="5" rx="2"/>
+                            <line x1="2" y1="10" x2="22" y2="10"/>
+                        </svg>
+                        New Loan
+                    </h2>
+                </div>
+
+                <div class="smart-contract-integration">
+                    <div class="smart-contract-header">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                            <path d="M2 12l10 5 10-5"/>
+                        </svg>
+                        Smart Contract Integration Active
+                    </div>
+                    <p class="smart-contract-text">
+                        Real blockchain loans powered by Ethereum smart contracts. Your collateral is secured on-chain.
+                    </p>
+                </div>
+
+                <form id="loan-form">
+                    <div class="warning-card">
+                        <div class="warning-header">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                                <path d="M12 9v4"/>
+                                <path d="m12 17 .01 0"/>
+                            </svg>
+                            Real Smart Contract Warning
+                        </div>
+                        <p class="warning-text">
+                            This creates a real blockchain transaction. Your ETH collateral will be locked in the smart contract until repayment.
+                        </p>
+                    </div>
+
+                    <div class="loan-progress" id="loan-progress" style="display: none;">
+                        <div class="progress-step" id="step-1">
+                            <span>1. Validating collateral amount</span>
+                        </div>
+                        <div class="progress-step" id="step-2">
+                            <span>2. Estimating gas costs</span>
+                        </div>
+                        <div class="progress-step" id="step-3">
+                            <span>3. Creating smart contract transaction</span>
+                        </div>
+                        <div class="progress-step" id="step-4">
+                            <span>4. Waiting for blockchain confirmation</span>
+                        </div>
+                        <div class="progress-step" id="step-5">
+                            <span>5. Loan funds transferred to your wallet</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="collateral" class="label">Collateral Amount (ETH)</label>
+                        <input
+                            type="number"
+                            id="collateral"
+                            class="input"
+                            placeholder="0.0"
+                            step="0.0001"
+                            min="0"
+                            required
+                        />
+                        <div class="balance-info">Available: <span id="available-balance">0.0000</span> ETH</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loan-amount" class="label">Loan Amount (ETH)</label>
+                        <input
+                            type="number"
+                            id="loan-amount"
+                            class="input"
+                            readonly
+                        />
+                        <div class="balance-info">Maximum 70% of collateral value</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loan-amount-usd" class="label">Loan Amount (USD Equivalent)</label>
+                        <input
+                            type="text"
+                            id="loan-amount-usd"
+                            class="input"
+                            readonly
+                            placeholder="$0.00"
+                        />
+                        <div class="balance-info">Current ETH price: $<span id="eth-price">0</span></div>
+                    </div>
+
+                    <div class="terms-card">
+                        <h3 class="terms-title">Smart Contract Loan Flow</h3>
+                        <div style="background: rgba(16, 185, 129, 0.1); padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                            <div style="font-weight: 500; color: #10b981; margin-bottom: 8px;">📈 What You Get:</div>
+                            <div style="font-size: 14px; color: #6ee7b7;">
+                                • Deposit <span id="collateral-display">0</span> ETH as collateral<br>
+                                • Receive <span id="loan-display">0</span> ETH as loan (70% of collateral)<br>
+                                • Keep the loan amount in your wallet to use
+                            </div>
+                        </div>
+                        <div style="background: rgba(234, 179, 8, 0.1); padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                            <div style="font-weight: 500; color: #fbbf24; margin-bottom: 8px;">📉 What You Owe:</div>
+                            <div style="font-size: 14px; color: #fde68a;">
+                                • Repay <span id="repayment-display">0</span> ETH (loan + 5% interest)<br>
+                                • Get your <span id="collateral-return-display">0</span> ETH collateral back<br>
+                                • Net cost: <span id="interest-cost-display">0</span> ETH (5% interest only)
+                            </div>
+                        </div>
+                        <div class="terms-row">
+                            <span>Interest Rate:</span>
+                            <span>5% APR</span>
+                        </div>
+                        <div class="terms-row">
+                            <span>Loan-to-Value:</span>
+                            <span>70%</span>
+                        </div>
+                        <div class="terms-row">
+                            <span>Loan Duration:</span>
+                            <span>30 days</span>
+                        </div>
+                        <div class="terms-row">
+                            <span>Gas Fee Estimate:</span>
+                            <span id="gas-estimate">Calculating...</span>
+                        </div>
+                    </div>
+
+                    <div id="balance-preview" class="terms-card" style="display: none;">
+                        <h3 class="terms-title">💰 Balance Preview</h3>
+                        <div class="terms-row">
+                            <span>Current Balance:</span>
+                            <span id="current-balance-preview">0 ETH</span>
+                        </div>
+                        <div class="terms-row" style="color: #ef4444;">
+                            <span>Collateral Sent:</span>
+                            <span id="collateral-sent-preview">-0 ETH</span>
+                        </div>
+                        <div class="terms-row" style="color: #10b981;">
+                            <span>Loan Received:</span>
+                            <span id="loan-received-preview">+0 ETH</span>
+                        </div>
+                        <div class="terms-row highlight" style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px; margin-top: 8px;">
+                            <span>New Balance:</span>
+                            <span id="new-balance-preview">0 ETH</span>
+                        </div>
+                        <div style="font-size: 12px; color: #9ca3af; margin-top: 8px;">
+                            * Gas fees not included in preview
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="borrow-btn">
+                        Create Real Blockchain Loan
+                    </button>
+                </form>
+            </div>
+
+            <!-- Active Loans -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Your Active Smart Contract Loans</h2>
+                </div>
+                <div id="loans-list">
+                    <div class="empty-state">
+                        <div class="empty-message">No active loans</div>
+                        <p class="empty-description">Create your first real blockchain loan using the form on the left</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        // Enhanced wallet state with smart contract integration
+        let walletState = {
+            isConnected: false,
+            account: null,
+            balance: '0',
+            chainId: null,
+            ethPrice: 0
+        };
+
+        // Smart contract instance
+        let cryptoBankContract = null;
+
+        // Check if MetaMask is installed
+        function isMetaMaskInstalled() {
+            return typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask;
+        }
+
+        // Show toast notification
+        function showToast(title, description, type = 'info') {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            toast.innerHTML = `
+                <div class="toast-title">${title}</div>
+                <div class="toast-description">${description}</div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            // Hide and remove toast after 5 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toastContainer.contains(toast)) {
+                        toastContainer.removeChild(toast);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        // Format address for display
+        function formatAddress(address) {
+            if (!address) return 'Not Connected';
+            return `${address.slice(0, 6)}...${address.slice(-4)}`;
+        }
+
+        // Convert Wei to ETH
+        function weiToEth(wei) {
+            return (parseInt(wei, 16) / Math.pow(10, 18)).toFixed(4);
+        }
+
+        // Fetch ETH price from API
+        async function fetchEthPrice() {
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+                const data = await response.json();
+                walletState.ethPrice = data.ethereum.usd;
+                document.getElementById('eth-price').textContent = walletState.ethPrice.toFixed(2);
+                return walletState.ethPrice;
+            } catch (error) {
+                console.error('Error fetching ETH price:', error);
+                walletState.ethPrice = 2000;
+                document.getElementById('eth-price').textContent = '2000.00';
+                return 2000;
+            }
+        }
+
+        // Initialize smart contract
+        async function initializeContract() {
+          try {
+            console.log('🔄 Starting contract initialization...');
+            
+            if (typeof window.CryptoBankContract === 'undefined') {
+              throw new Error('CryptoBankContract class not loaded. Please check if contract-integration.js is loaded.');
+            }
+            
+            cryptoBankContract = new CryptoBankContract();
+            const initialized = await cryptoBankContract.initialize();
+            
+            if (initialized) {
+              showToast('Smart Contract Ready', 'Connected to CryptoBank loan contract', 'success');
+              return true;
+            } else {
+              throw new Error('Contract initialization returned false');
+            }
+          } catch (error) {
+            console.error('Error initializing contract:', error);
+            showToast('Contract Error', error.message || 'Failed to connect to smart contract', 'error');
+            throw error;
+          }
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('walletConnected');
+                localStorage.removeItem('walletAccount');
+                localStorage.removeItem('walletChainId');
+                localStorage.removeItem('walletBalance');
+                localStorage.removeItem('userLoggedIn');
+                
+                walletState.isConnected = false;
+                walletState.account = null;
+                walletState.balance = '0';
+                walletState.chainId = null;
+                
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Update navigation display
+        function updateNavigation() {
+            const connectionDot = document.getElementById('connection-dot');
+            const connectionText = document.getElementById('connection-text');
+            const accountNumber = document.getElementById('account-number');
+
+            if (walletState.isConnected && walletState.account) {
+                connectionDot.className = 'status-dot connected';
+                connectionText.textContent = 'Connected';
+                accountNumber.textContent = `Account: ${formatAddress(walletState.account)}`;
+            } else {
+                connectionDot.className = 'status-dot disconnected';
+                connectionText.textContent = 'Disconnected';
+                accountNumber.textContent = 'Account: Not Connected';
+            }
+        }
+
+        // Update balance display
+        function updateBalanceDisplay() {
+            const availableBalance = document.getElementById('available-balance');
+            availableBalance.textContent = parseFloat(walletState.balance).toFixed(4);
+        }
+
+        // Calculate loan amount
+        function calculateLoanAmount(collateral) {
+            const loanAmount = (parseFloat(collateral) * 0.7).toFixed(4);
+            const usdAmount = (parseFloat(loanAmount) * walletState.ethPrice).toFixed(2);
+            
+            document.getElementById('loan-amount-usd').value = `$${usdAmount}`;
+            return loanAmount;
+        }
+
+        // Handle collateral input change
+function handleCollateralChange() {
+    const collateralInput = document.getElementById('collateral');
+    const loanAmountInput = document.getElementById('loan-amount');
+    const balancePreview = document.getElementById('balance-preview');
+    
+    const collateralValue = collateralInput.value;
+    if (collateralValue && parseFloat(collateralValue) > 0) {
+        const loanAmount = calculateLoanAmount(collateralValue);
+        loanAmountInput.value = loanAmount;
+        
+        // Update the flow displays
+        const collateralNum = parseFloat(collateralValue);
+        const loanNum = parseFloat(loanAmount);
+        const repaymentNum = loanNum * 1.05; // 5% interest
+        const interestCost = repaymentNum - loanNum;
+        
+        document.getElementById('collateral-display').textContent = collateralNum.toFixed(4);
+        document.getElementById('loan-display').textContent = loanNum.toFixed(4);
+        document.getElementById('repayment-display').textContent = repaymentNum.toFixed(4);
+        document.getElementById('collateral-return-display').textContent = collateralNum.toFixed(4);
+        document.getElementById('interest-cost-display').textContent = interestCost.toFixed(4);
+        
+        // Show balance preview
+        const currentBalance = parseFloat(walletState.balance);
+        const newBalance = currentBalance - collateralNum + loanNum;
+        
+        document.getElementById('current-balance-preview').textContent = currentBalance.toFixed(4) + ' ETH';
+        document.getElementById('collateral-sent-preview').textContent = '-' + collateralNum.toFixed(4) + ' ETH';
+        document.getElementById('loan-received-preview').textContent = '+' + loanNum.toFixed(4) + ' ETH';
+        document.getElementById('new-balance-preview').textContent = newBalance.toFixed(4) + ' ETH';
+        
+        balancePreview.style.display = 'block';
+    } else {
+        loanAmountInput.value = '';
+        document.getElementById('loan-amount-usd').value = '';
+        balancePreview.style.display = 'none';
+        
+        // Clear displays
+        document.getElementById('collateral-display').textContent = '0';
+        document.getElementById('loan-display').textContent = '0';
+        document.getElementById('repayment-display').textContent = '0';
+        document.getElementById('collateral-return-display').textContent = '0';
+        document.getElementById('interest-cost-display').textContent = '0';
+    }
+}
+
+        // Get wallet balance
+        async function getBalance(account) {
+            try {
+                const balance = await window.ethereum.request({
+                    method: 'eth_getBalance',
+                    params: [account, 'latest']
+                });
+                return weiToEth(balance);
+            } catch (error) {
+                console.error('Error getting balance:', error);
+                return '0.0000';
+            }
+        }
+
+        // Update loan progress steps
+        function updateLoanProgress(activeStep) {
+            const steps = ['step-1', 'step-2', 'step-3', 'step-4', 'step-5'];
+            
+            steps.forEach((stepId, index) => {
+                const step = document.getElementById(stepId);
+                if (index < activeStep) {
+                    step.className = 'progress-step completed';
+                } else if (index === activeStep) {
+                    step.className = 'progress-step active';
+                } else {
+                    step.className = 'progress-step';
+                }
+            });
+        }
+
+        // Create real blockchain loan
+        async function createRealLoan(collateralAmount, loanAmount) {
+            try {
+                // Show progress
+                document.getElementById('loan-progress').style.display = 'block';
+                updateLoanProgress(0);
+                
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                updateLoanProgress(1);
+
+                // Estimate gas
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                updateLoanProgress(2);
+                
+                // Create smart contract transaction
+                showToast('Creating Loan', 'Please confirm the transaction in MetaMask', 'info');
+                const result = await cryptoBankContract.createLoan(collateralAmount, walletState.account);
+                
+                updateLoanProgress(3);
+                
+                // Wait for confirmation
+                showToast('Transaction Sent', 'Waiting for blockchain confirmation...', 'info');
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                updateLoanProgress(4);
+                
+                // Update balance - user receives loan amount but loses collateral
+                // The smart contract handles this: user sends collateral, receives 70% back as loan
+                // So net effect: user loses 30% of collateral, gains loan amount
+                const currentBalance = parseFloat(walletState.balance);
+                const collateralAmountNum = parseFloat(collateralAmount);
+                const loanAmountNum = parseFloat(loanAmount);
+                
+                // User's new balance = old balance - collateral sent + loan received
+                // But since loan is 70% of collateral, net effect is user loses 30% of collateral
+                const newBalance = currentBalance - collateralAmountNum + loanAmountNum;
+                walletState.balance = newBalance.toFixed(4);
+                
+                return {
+                    success: true,
+                    transactionHash: result.transactionHash,
+                    loanId: result.loanId
+                };
+                
+            } catch (error) {
+                console.error('Real loan creation failed:', error);
+                throw error;
+            }
+        }
+
+        // Load real loans from smart contract
+        async function loadRealLoans() {
+            if (!cryptoBankContract || !walletState.account) {
+                displayLoans([]);
+                return;
+            }
+
+            try {
+                const loans = await cryptoBankContract.getUserLoans(walletState.account);
+                const activeLoans = loans.filter(loan => loan.isActive && !loan.isRepaid);
+                displayLoans(activeLoans);
+            } catch (error) {
+                console.error('Error loading loans:', error);
+                displayLoans([]);
+            }
+        }
+
+        // Display loans
+        function displayLoans(loans) {
+            const loansList = document.getElementById('loans-list');
+            
+            if (loans.length === 0) {
+                loansList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-message">No active loans</div>
+                        <p class="empty-description">Create your first real blockchain loan using the form on the left</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let loansHTML = '';
+            loans.forEach(loan => {
+                const repaymentAmount = (loan.loanAmount * 1.055).toFixed(4);
+                const repaymentUSD = (repaymentAmount * walletState.ethPrice).toFixed(2);
+                const dueDate = new Date(loan.dueDate).toLocaleDateString();
+                
+                loansHTML += `
+                    <div class="loan-item">
+                        <div class="loan-header">
+                            <div>
+                                <div class="loan-id">Smart Contract Loan #${loan.id}</div>
+                                <div class="loan-date">Created: ${new Date(loan.createdAt).toLocaleDateString()}</div>
+                                <div class="loan-date">Due: ${dueDate}</div>
+                            </div>
+                            <div class="loan-amount">
+                                <div style="color: #10b981;">+${loan.loanAmount} ETH</div>
+                                <div class="loan-label">Received as Loan</div>
+                            </div>
+                        </div>
+                        
+                        <div class="loan-details">
+                            <div class="loan-detail-row">
+                                <span>Collateral (Locked):</span>
+                                <span style="color: #ef4444;">-${loan.collateralAmount} ETH</span>
+                            </div>
+                            <div class="loan-detail-row">
+                                <span>Interest Rate:</span>
+                                <span>${loan.interestRate}% APR</span>
+                            </div>
+                            <div class="loan-detail-row highlight">
+                                <span>Total Repayment Required:</span>
+                                <span style="color: #ef4444;">-${repaymentAmount} ETH ($${repaymentUSD})</span>
+                            </div>
+                            <div class="loan-detail-row">
+                                <span>Net Cost (Interest):</span>
+                                <span style="color: #ef4444;">-${(repaymentAmount - loan.loanAmount).toFixed(4)} ETH</span>
+                            </div>
+                            <div class="loan-detail-row">
+                                <span>Contract Address:</span>
+                                <span>${formatAddress(cryptoBankContract.contractAddress)}</span>
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(16, 185, 129, 0.1); padding: 12px; border-radius: 8px; margin: 12px 0; border-left: 4px solid #10b981;">
+                            <div style="font-weight: 500; color: #10b981; margin-bottom: 4px;">💡 Loan Flow Explanation:</div>
+                            <div style="font-size: 14px; color: #6ee7b7;">
+                                • You deposited ${loan.collateralAmount} ETH as collateral<br>
+                                • You received ${loan.loanAmount} ETH as loan (70% of collateral)<br>
+                                • To get your collateral back, repay ${repaymentAmount} ETH<br>
+                                • Your collateral will be automatically returned after repayment
+                            </div>
+                        </div>
+                        
+                        <button onclick="repayRealLoan('${loan.id}', '${repaymentAmount}')" class="btn btn-success">
+                            Repay ${repaymentAmount} ETH & Get ${loan.collateralAmount} ETH Collateral Back
+                        </button>
+                    </div>
+                `;
+            });
+            
+            loansList.innerHTML = loansHTML;
+        }
+
+        // Repay real loan
+        async function repayRealLoan(loanId, repaymentAmount) {
+            if (!cryptoBankContract) {
+                showToast('Error', 'Smart contract not initialized', 'error');
+                return;
+            }
+
+            const repaymentAmountNum = parseFloat(repaymentAmount);
+            const currentBalance = parseFloat(walletState.balance);
+            
+            if (currentBalance < repaymentAmountNum) {
+                showToast('Error', 'Insufficient balance for repayment', 'error');
+                return;
+            }
+
+            try {
+                showToast('Processing', 'Please confirm the repayment transaction in MetaMask', 'info');
+                
+                const result = await cryptoBankContract.repayLoan(loanId, repaymentAmount, walletState.account);
+                
+                showToast('Repayment Sent', 'Waiting for blockchain confirmation...', 'info');
+                
+                // Wait for confirmation
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                
+                // Update balance - user pays repayment amount but gets collateral back
+                // Net effect: user loses (repayment - original_collateral)
+                // For simplicity, we'll refresh the actual balance from blockchain
+                walletState.balance = await getBalance(walletState.account);
+                updateBalanceDisplay();
+                await loadRealLoans();
+                
+                showToast('Loan Repaid!', `Smart contract loan repaid successfully. Transaction: ${result.transactionHash.slice(0, 10)}...`, 'success');
+                
+            } catch (error) {
+                console.error('Repayment failed:', error);
+                let errorMessage = 'Failed to repay loan';
+                if (error.code === 4001) {
+                    errorMessage = 'Transaction rejected by user';
+                }
+                showToast('Repayment Failed', errorMessage, 'error');
+            }
+        }
+
+        // Handle loan form submission
+        async function handleLoanForm(event) {
+            event.preventDefault();
+            
+            if (!walletState.isConnected) {
+                showToast('Error', 'Please connect your MetaMask wallet first', 'error');
+                return;
+            }
+
+            if (!cryptoBankContract) {
+                showToast('Error', 'Smart contract not initialized', 'error');
+                return;
+            }
+            
+            const collateralInput = document.getElementById('collateral');
+            const loanAmountInput = document.getElementById('loan-amount');
+            const borrowBtn = document.getElementById('borrow-btn');
+            
+            const collateralAmount = collateralInput.value.trim();
+            const loanAmount = loanAmountInput.value.trim();
+            
+            if (!collateralAmount || !loanAmount) {
+                showToast('Error', 'Please enter collateral amount', 'error');
+                return;
+            }
+            
+            if (parseFloat(collateralAmount) > parseFloat(walletState.balance)) {
+                showToast('Error', 'Insufficient balance for collateral', 'error');
+                return;
+            }
+            
+            borrowBtn.disabled = true;
+            borrowBtn.textContent = 'Creating Blockchain Loan...';
+            borrowBtn.classList.add('loading');
+            
+            try {
+                const result = await createRealLoan(collateralAmount, loanAmount);
+                
+                showToast('Loan Created!', `Smart contract loan created successfully! Transaction: ${result.transactionHash.slice(0, 10)}...`, 'success');
+                
+                // Clear form
+                collateralInput.value = '';
+                loanAmountInput.value = '';
+                document.getElementById('loan-amount-usd').value = '';
+                document.getElementById('loan-progress').style.display = 'none';
+                
+                // Refresh balance and loans
+                setTimeout(async () => {
+                    walletState.balance = await getBalance(walletState.account);
+                    updateBalanceDisplay();
+                    await loadRealLoans();
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Loan failed:', error);
+                let errorMessage = 'Failed to create loan';
+                
+                if (error.code === 4001) {
+                    errorMessage = 'Transaction rejected by user';
+                } else if (error.message && error.message.includes('insufficient funds')) {
+                    errorMessage = 'Insufficient funds for gas or collateral';
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                showToast('Loan Failed', errorMessage, 'error');
+                document.getElementById('loan-progress').style.display = 'none';
+            } finally {
+                borrowBtn.disabled = false;
+                borrowBtn.textContent = 'Create Real Blockchain Loan';
+                borrowBtn.classList.remove('loading');
+            }
+        }
+
+        // Restore wallet connection
+        async function restoreWalletConnection() {
+            const isWalletConnected = localStorage.getItem('walletConnected') === 'true';
+            const storedAccount = localStorage.getItem('walletAccount');
+            
+            if (!isWalletConnected || !storedAccount || !isMetaMaskInstalled()) {
+                return false;
+            }
+            
+            try {
+                const accounts = await window.ethereum.request({
+                    method: 'eth_accounts'
+                });
+                
+                if (accounts.length > 0) {
+                    walletState.account = accounts[0];
+                    walletState.isConnected = true;
+                    
+                    walletState.chainId = await window.ethereum.request({
+                        method: 'eth_chainId'
+                    });
+                    
+                    walletState.balance = await getBalance(accounts[0]);
+                    
+                    updateNavigation();
+                    updateBalanceDisplay();
+                    
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error('Error restoring wallet connection:', error);
+                return false;
+            }
+        }
+
+        // Handle account changes
+        function handleAccountsChanged(accounts) {
+            if (accounts.length === 0) {
+                walletState.isConnected = false;
+                walletState.account = null;
+                walletState.balance = '0';
+                updateNavigation();
+                updateBalanceDisplay();
+                showToast('Warning', 'Wallet disconnected', 'error');
+            } else if (accounts[0] !== walletState.account) {
+                walletState.account = accounts[0];
+                getBalance(accounts[0]).then(balance => {
+                    walletState.balance = balance;
+                    updateBalanceDisplay();
+                });
+                updateNavigation();
+                loadRealLoans(); // Reload loans for new account
+                showToast('Info', 'Account changed to ' + formatAddress(accounts[0]), 'info');
+            }
+        }
+
+        // Handle chain changes 
+        function handleChainChanged(chainId) {
+            walletState.chainId = chainId;
+            if (walletState.account) {
+                getBalance(walletState.account).then(balance => {
+                    walletState.balance = balance;
+                    updateBalanceDisplay();
+                });
+            }
+            // Reinitialize contract for a new chain
+            initializeContract();
+        }
+
+        // Initialize the page
+        async function initLoanPage() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn');
+            if (!isLoggedIn) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Fetch ETH price (Will fetch current price from API)
+            await fetchEthPrice();
+            
+            // Try to restore wallet connection
+            const connectionRestored = await restoreWalletConnection();
+            
+            if (!connectionRestored) {
+                if (isMetaMaskInstalled()) {
+                    try {
+                        const accounts = await window.ethereum.request({
+                            method: 'eth_accounts'
+                        });
+                        
+                        if (accounts.length > 0) {
+                            walletState.account = accounts[0];
+                            walletState.isConnected = true;
+                            
+                            walletState.chainId = await window.ethereum.request({
+                                method: 'eth_chainId'
+                            });
+                            
+                            walletState.balance = await getBalance(accounts[0]);
+                            
+                            updateNavigation();
+                            updateBalanceDisplay();
+                        }
+                    } catch (error) {
+                        console.error('Error checking MetaMask accounts:', error);
+                    }
+                }
+            }
+
+            // Initialize smart contract with better error handling
+            try {
+              await initializeContract();
+            } catch (error) {
+              console.error('Contract initialization failed:', error);
+              showToast('Contract Error', 'Failed to initialize smart contract. Please check console for details.', 'error');
+              
+              // Show detailed error in console
+              console.log('🔧 Troubleshooting steps:');
+              console.log('1. Make sure Ganache is running on port 8545');
+              console.log('2. Check if contract is deployed: npm run check-deployment');
+              console.log('3. Add liquidity if needed: npm run add-liquidity');
+              console.log('4. Refresh the page and try again');
+            }
+
+            // Load real loans from smart contract
+            await loadRealLoans();
+
+            // Set up MetaMask event listeners
+            if (isMetaMaskInstalled()) {
+                window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+                window.ethereum.removeListener('chainChanged', handleChainChanged);
+                
+                window.ethereum.on('accountsChanged', handleAccountsChanged);
+                window.ethereum.on('chainChanged', handleChainChanged);
+            }
+
+            // Set up form event listeners
+            const loanForm = document.getElementById('loan-form');
+            const collateralInput = document.getElementById('collateral');
+            
+            loanForm.addEventListener('submit', handleLoanForm);
+            collateralInput.addEventListener('input', handleCollateralChange);
+
+            // Estimate gas costs periodically
+            setInterval(async () => {
+                if (cryptoBankContract && walletState.isConnected) {
+                    try {
+                        const gasPrice = await window.ethereum.request({
+                            method: 'eth_gasPrice'
+                        });
+                        const gasPriceGwei = parseInt(gasPrice, 16) / Math.pow(10, 9);
+                        const estimatedGasCost = (gasPriceGwei * 150000) / Math.pow(10, 9); // Estimate 150k gas
+                        document.getElementById('gas-estimate').textContent = `~${estimatedGasCost.toFixed(4)} ETH`;
+                    } catch (error) {
+                        document.getElementById('gas-estimate').textContent = '~0.005 ETH';
+                    }
+                }
+            }, 10000); // Update every 10 seconds
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (!mobileMenu.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initLoanPage);
+
+        // Clean up event listeners
+        window.addEventListener('beforeunload', () => {
+            if (isMetaMaskInstalled()) {
+                window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+                window.ethereum.removeListener('chainChanged', handleChainChanged);
+            }
+        });
+
+
+
+        // ===================== Activity Tracker =====================
+function loadActivities(containerId = 'activity-list') {
+    const activities = JSON.parse(localStorage.getItem('activities') || '[]');
+    const activityList = document.getElementById(containerId);
+
+    if (!activityList) return;
+
+    activityList.innerHTML = '';
+
+    if (activities.length === 0) {
+        activityList.innerHTML = '<p>No activity recorded yet.</p>';
+        return;
+    }
+
+    activities.reverse().forEach(act => {
+        const div = document.createElement('div');
+        div.className = 'activity';
+        div.innerHTML = `
+            <div class="activity-header">${act.type.toUpperCase()} - ${act.status}</div>
+            <div>${act.description}</div>
+            <div class="timestamp">${new Date(act.timestamp).toLocaleString()}</div>
+        `;
+        activityList.appendChild(div);
+    });
+}
+
+// ===================== Transaction History Tracker =====================
+function loadTransactionHistory(containerId = 'tx-table-body') {
+    const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+    const tableBody = document.getElementById(containerId);
+
+    if (!tableBody) return;
+
+    tableBody.innerHTML = '';
+
+    if (transactions.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="6">No transactions found</td></tr>';
+        return;
+    }
+
+    transactions.reverse().forEach(tx => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${tx.type.replace('_', ' ').toUpperCase()}</td>
+            <td>${parseFloat(tx.amount).toFixed(4)}</td>
+            <td>${tx.from}</td>
+            <td>${tx.to}</td>
+            <td class="hash">${tx.hash.slice(0, 10)}...</td>
+            <td>${new Date(tx.timestamp).toLocaleString()}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+    </script>
+</body>
+</html>
